@@ -1,0 +1,10 @@
+services:
+  web:
+    image: nginx:alpine  # Use the Nginx image
+    volumes:
+      # Map the Angular build folder to Nginx's web root
+      - ./app-frontend/dist/MEAN-Stack:/usr/share/nginx/html:ro
+    ports:
+      - "84:80"  
+
+
