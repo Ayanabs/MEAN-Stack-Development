@@ -1,2 +1,2 @@
 # MEAN-Stack-Development
-Full Stack Project using React, MongoDB, JavaScript,
+Full Stack Project using React, MongoDB, Angular and Node.js
