@@ -3,14 +3,32 @@
   <p>Select your seats below and enjoy the show!</p>
 </div>
 
-<!-- Screen and Calendar Section -->
 <div class="screen-container">
-  <!-- "Now Showing" Tab -->
   <div class="tab left-tab">
     <p>Now Showing</p>
+
+    <!-- Movie Selection -->
+    <div class="movie-selection">
+      <label for="movie">Movie:</label>
+      <select id="movie" [(ngModel)]="selectedMovie" (change)="onMovieChange()">
+        <option *ngFor="let movie of movies" [value]="movie.name">{{ movie.name }}</option>
+      </select>
+    </div>
+
+    <!-- Showtime Selection -->
+    <div class="showtime-selection">
+      <label for="time">Showtime:</label>
+      <select id="time" [(ngModel)]="selectedTime" (change)="loadBookingsForDate()">
+        <option *ngFor="let time of selectedMovieTimes">{{ time }}</option>
+      </select>
+    </div>
+
+    <!-- Movie Poster -->
+    <div class="movie-image">
+      <img [src]="selectedMovieImage" alt="Movie Poster" />
+    </div>
   </div>
 
-  <!-- Screen Indicator -->
   <div class="screen">
     <p>Screen This Way</p>
   </div>
@@ -18,25 +36,17 @@
   <!-- Calendar Section -->
   <div class="calendar">
     <div class="calendar-header">
-      <!-- Month Navigation -->
       <button (click)="prevMonth()">&#8249;</button>
       <span>{{ currentMonth + 1 }} / {{ currentYear }}</span>
       <button (click)="nextMonth()">&#8250;</button>
     </div>
 
-    <!-- Calendar Grid -->
     <div class="calendar-grid">
-      <!-- Days of the Week -->
       <div class="day" *ngFor="let dayName of dayNames">{{ dayName }}</div>
-
-      <!-- Dates of the Month -->
       <div
         *ngFor="let day of calendarDays"
         class="calendar-day"
-        [ngClass]="{
-          'current-day': day?.isCurrent,
-          'selected-day': day?.isSelected
-        }"
+        [ngClass]="{ 'current-day': day?.isCurrent, 'selected-day': day?.isSelected }"
         (click)="selectDay(day)"
       >
         {{ day?.day || '' }}
@@ -45,13 +55,7 @@
   </div>
 </div>
 
-<!-- Seat Booking Section -->
-<div *ngIf="bookedSeat !== null" class="booking-message">
-  <p>
-    Seat {{ bookedSeat.row }} - {{ bookedSeat.seat }} is {{ bookedSeat.status }}!
-  </p>
-</div>
-
+<!-- Seat Selection Section -->
 <div class="seat-container">
   <div *ngFor="let row of rows; let rowIndex = index" class="seat-row">
     <div
@@ -65,7 +69,7 @@
         Book
       </button>
       <button class="remove-btn" *ngIf="seat.booked" (click)="removeBooking(rowIndex, seatIndex)">
-        Cancel
+        Remove
       </button>
     </div>
   </div>
