@@ -1,54 +1,50 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  // Calendar state
-  currentMonth: number = new Date().getMonth(); // Current month (0 = January)
-  currentYear: number = new Date().getFullYear(); // Current year
-  currentDate: number = new Date().getDate(); // Today's date
-  selectedDay: { day: number, month: number, year: number } | null = null; // Selected date
-  calendarDays: ({ day: number, isCurrent: boolean, isSelected: boolean } | null)[] = []; // Days of the month
-
-  dayNames: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; // Days of the week
-
-  // Seats state
   rows = [
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),  // Row 1
+    Array(7).fill(null).map(() => ({ selected: false, booked: false })), // Row 1
     Array(12).fill(null).map(() => ({ selected: false, booked: false })), // Row 2
     Array(15).fill(null).map(() => ({ selected: false, booked: false })), // Row 3
     Array(12).fill(null).map(() => ({ selected: false, booked: false })), // Row 4
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),  // Row 5
+    Array(7).fill(null).map(() => ({ selected: false, booked: false })), // Row 5
   ];
+  bookedSeat: { row: number; seat: number; status: string } | null = null;
 
-  bookedSeat: { row: number, seat: number, status: string } | null = null; // Last booked seat info
+  currentMonth: number = new Date().getMonth();
+  currentYear: number = new Date().getFullYear();
+  currentDate: number = new Date().getDate();
+  selectedDay: { day: number; month: number; year: number } | null = null;
+  calendarDays: ({ day: number; isCurrent: boolean; isSelected: boolean } | null)[] = [];
 
-  // Initialize calendar
+  dayNames: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  constructor(private http: HttpClient) {}
+
   ngOnInit(): void {
     this.generateCalendar();
   }
 
-  // Generate the days for the current month
   generateCalendar(): void {
     const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);
     const lastDayOfMonth = new Date(this.currentYear, this.currentMonth + 1, 0);
     const daysInMonth = lastDayOfMonth.getDate();
-    const startingDay = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const startingDay = firstDayOfMonth.getDay();
 
     this.calendarDays = [];
 
-    // Fill in the empty days before the start of the month
     for (let i = 0; i < startingDay; i++) {
       this.calendarDays.push(null);
     }
 
-    // Fill in the days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const isCurrentDay =
         day === this.currentDate &&
@@ -63,10 +59,9 @@ export class AppComponent implements OnInit {
     }
   }
 
-  // Move to the previous month
   prevMonth(): void {
     if (this.currentMonth === 0) {
-      this.currentMonth = 11;  // December
+      this.currentMonth = 11;
       this.currentYear--;
     } else {
       this.currentMonth--;
@@ -74,10 +69,9 @@ export class AppComponent implements OnInit {
     this.generateCalendar();
   }
 
-  // Move to the next month
   nextMonth(): void {
     if (this.currentMonth === 11) {
-      this.currentMonth = 0;  // January
+      this.currentMonth = 0;
       this.currentYear++;
     } else {
       this.currentMonth++;
@@ -85,45 +79,117 @@ export class AppComponent implements OnInit {
     this.generateCalendar();
   }
 
-  // Select a day
-  selectDay(day: { day: number, isCurrent: boolean } | null): void {
+  selectDay(day: { day: number; isCurrent: boolean } | null): void {
     if (day) {
+      this.resetSeats(); // Reset seats when changing the day
       this.selectedDay = { day: day.day, month: this.currentMonth, year: this.currentYear };
-      this.generateCalendar(); // Regenerate calendar to reflect the selected day
+      const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+
+      // Fetch bookings for the selected day
+      this.http.get<any>(`http://localhost:5000/api/bookings/${formattedDate}`).subscribe({
+        next: (response) => {
+          if (response && response.seats) {
+            response.seats.forEach((seat: { row: number; seat: number }) => {
+              this.rows[seat.row - 1][seat.seat - 1].booked = true;
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching bookings:', err);
+          this.resetSeats(); // Reset seats if no bookings are found
+        },
+      });
+
+      this.generateCalendar();
     }
   }
 
-  // Toggle seat selection
+  resetSeats(): void {
+    this.rows.forEach((row) => {
+      row.forEach((seat) => {
+        seat.selected = false;
+        seat.booked = false;
+      });
+    });
+  }
+
   toggleSeat(rowIndex: number, seatIndex: number): void {
     const seat = this.rows[rowIndex][seatIndex];
     if (!seat.booked) {
       seat.selected = !seat.selected;
       this.bookedSeat = seat.selected
-        ? { row: rowIndex + 1, seat: this.getSeatNumber(rowIndex, seatIndex), status: 'Selected' }
+        ? { row: rowIndex + 1, seat: seatIndex + 1, status: 'Selected' }
         : null;
     }
   }
 
-  // Confirm booking for a seat
   confirmBooking(rowIndex: number, seatIndex: number): void {
     const seat = this.rows[rowIndex][seatIndex];
     if (seat.selected) {
       seat.booked = true;
-      seat.selected = false; // Deselect after booking
-      this.bookedSeat = { row: rowIndex + 1, seat: this.getSeatNumber(rowIndex, seatIndex), status: 'Booked' };
+      seat.selected = false;
+      this.bookedSeat = { row: rowIndex + 1, seat: seatIndex + 1, status: 'Booked' };
+
+      // Check if selectedDay is defined before proceeding
+      if (this.selectedDay) {
+        const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+        const seatData = {
+          date: formattedDate,
+          seats: this.rows.flatMap((row, rowIdx) =>
+            row
+              .map((s, seatIdx) => (s.booked ? { row: rowIdx + 1, seat: seatIdx + 1 } : null))
+              .filter((s) => s !== null)
+          ),
+        };
+
+        // Send the booking to the backend
+        this.http.post('http://localhost:5000/api/bookings', seatData).subscribe({
+          next: () => {
+            console.log('Booking saved to database!');
+          },
+          error: (err) => {
+            console.error('Error saving booking:', err);
+          },
+        });
+      } else {
+        console.error('Error: No selected day to confirm booking.');
+      }
     }
   }
 
-  // Remove booking for a seat
   removeBooking(rowIndex: number, seatIndex: number): void {
     const seat = this.rows[rowIndex][seatIndex];
     if (seat.booked) {
       seat.booked = false;
-      this.bookedSeat = { row: rowIndex + 1, seat: this.getSeatNumber(rowIndex, seatIndex), status: 'Unbooked' };
+      this.bookedSeat = null;
+
+      // Check if selectedDay is defined before proceeding
+      if (this.selectedDay) {
+        const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+        const seatData = {
+          date: formattedDate,
+          seats: this.rows.flatMap((row, rowIdx) =>
+            row
+              .map((s, seatIdx) => (s.booked ? { row: rowIdx + 1, seat: seatIdx + 1 } : null))
+              .filter((s) => s !== null)
+          ),
+        };
+
+        // Update the backend
+        this.http.post('http://localhost:5000/api/bookings', seatData).subscribe({
+          next: () => {
+            console.log('Booking updated in database!');
+          },
+          error: (err) => {
+            console.error('Error updating booking:', err);
+          },
+        });
+      } else {
+        console.error('Error: No selected day to remove booking.');
+      }
     }
   }
 
-  // Get seat number
   getSeatNumber(rowIndex: number, seatIndex: number): number {
     let seatStart = 1;
     for (let i = 0; i < rowIndex; i++) {

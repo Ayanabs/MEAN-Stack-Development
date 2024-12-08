@@ -18,45 +18,51 @@ body {
   margin: 0;
 }
 
-/* Container for the screen and calendar */
+/* Screen and Calendar Section */
 .screen-container {
   display: flex;
   justify-content: space-between;
-  margin: 20px;
   align-items: flex-start;
+  margin: 20px 10px;
 }
 
-/* "Now Showing" tab */
+/* "Now Showing" Tab */
 .left-tab {
   background-color: #444;
   color: white;
-  padding: 10px 20px;
+  padding: 15px;
   border-radius: 10px;
-  width: 15%;
+  width: 20%;
   text-align: center;
   cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
 }
 
-/* "Screen This Way" tab */
+.left-tab:hover {
+  background-color: #555;
+}
+
+/* Screen Indicator */
 .screen {
-  background-color: #444;
-  color: #fff;
-  padding: 10px;
-  width: 70%;
-  margin-right: 1%;
-  margin-left: 1%;
+  background-color: #333;
+  color: white;
+  padding: 15px;
+  width: 60%;
   font-size: 1.2rem;
   text-transform: uppercase;
   border-radius: 10px;
   text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Calendar container */
 .calendar {
-  width: 15%;
+  width: 20%;
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Calendar header (month navigation) */
@@ -64,148 +70,157 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
-/* Grid for calendar days */
+.calendar-header button {
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.calendar-header button:hover {
+  background-color: #555;
+}
+
+/* Calendar Grid */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); 
-  grid-gap: 2px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
   text-align: center;
+  margin-top: 10px;
 }
 
-/* Day labels bold */
+.day {
+  font-weight: bold;
+}
 
-
-/* Date cells */
-.date {
+.calendar-day {
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  border-radius: 5px;
 }
 
-.date:hover {
+.calendar-day:hover {
   background-color: #ddd; /* Hover effect for dates */
 }
 
 /* Current day styling */
 .current-day {
-  background-color: #ff2f00; /* Background color for the current day */
-  color: white;  /* Text color */
+  background-color: #ff2f00;
+  color: white;
   font-weight: bold;
-  border-radius: 50%;  /* Makes the background circular */
-   /* Adds padding for a more rounded appearance */
-  display: inline-block;  /* Ensures that the element takes only as much space as needed */
-  width: 20px;  /* Width for the circle */
-  height: 20px;  /* Height for the circle */
-  text-align: center;  /* Centers the text inside the circle */
- 
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
 }
 
-/* Seat row styling */
+.selected-day {
+  background-color: orange;
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+}
+
+/* Seat Booking Section */
+.seat-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .seat-row {
   display: flex;
   justify-content: center;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
-/* Individual seat styling */
 .seat {
-  width: 70px;
-  height: 60px;
+  width: 60px;
+  height: 50px;
   background-color: #bbb;
   border: 2px solid #999;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: bold;
   cursor: pointer;
   user-select: none;
-  font-weight: bold;
-  border-radius: 10px;
-  transition: background-color 0.3s, transform 0.3s;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
   margin: 5px;
   position: relative;
 }
 
-/* Seat selected state */
-.seat.selected {
-  background-color: #dacd10;
-  color: white;
-  border-color: #dacd10;
-  transform: scale(1.1);
+.seat:hover {
+  background-color: #28a745;
 }
 
-/* Booked seat state */
 .seat.booked {
   background-color: #e74c3c;
   color: white;
   border-color: #c0392b;
 }
 
-/* Hover effects on seats */
-.seat:hover {
-  background-color: #28a745;
-}
-
-.seat:hover.booked {
-  background-color: #e74c3c;
-}
-
-.seat:hover.selected {
+.seat.selected {
   background-color: #dacd10;
+  color: white;
+  transform: scale(1.1);
 }
 
-/* Book button inside seat */
-.book-btn {
-  background-color: #fffefe;
-  color: rgb(0, 0, 0);
-  border: 2px solid #060606;
-  padding: 3px 9px;
-  font-size: 0.7rem;
-  border-radius: 8px;
+/* Buttons inside seats */
+.book-btn,
+.remove-btn {
   position: absolute;
-  bottom: -8px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-btn {
+  bottom: -10px;
+  background-color: #28a745;
+  color: white;
 }
 
 .book-btn:hover {
-  background-color: #2e26bb;
-  border: none;
-  color: #fff;
+  background-color: #218838;
 }
 
-/* Remove booking button styling */
 .remove-btn {
-  background-color: #ff6347;
+  top: -10px;
+  background-color: #dc3545;
   color: white;
-  border: none;
-  padding: 3px 8px;
-  font-size: 0.7rem;
-  border-radius: 5px;
-  position: absolute;
-  top: -20px;
-  cursor: pointer;
 }
 
 .remove-btn:hover {
-  background-color: #e53e2e;
+  background-color: #c82333;
 }
 
 /* Booking message styling */
 .booking-message {
-  color: #333;
+  color: #444;
   font-size: 1.2rem;
   font-weight: bold;
-  margin-bottom: 5px;
-}
-.selected-day {
-  background-color: orange;
-  color: white;
-  font-weight: bold;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  display: inline-block;
+  margin-top: 10px;
 }

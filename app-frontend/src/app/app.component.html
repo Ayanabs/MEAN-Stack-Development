@@ -19,27 +19,27 @@
   <div class="calendar">
     <div class="calendar-header">
       <!-- Month Navigation -->
-      <button aria-label="Previous Month" (click)="prevMonth()">&lt;</button>
+      <button (click)="prevMonth()">&#8249;</button>
       <span>{{ currentMonth + 1 }} / {{ currentYear }}</span>
-      <button aria-label="Next Month" (click)="nextMonth()">&gt;</button>
+      <button (click)="nextMonth()">&#8250;</button>
     </div>
 
     <!-- Calendar Grid -->
     <div class="calendar-grid">
       <!-- Days of the Week -->
-      <div class="day" *ngFor="let day of dayNames">{{ day }}</div>
+      <div class="day" *ngFor="let dayName of dayNames">{{ dayName }}</div>
 
       <!-- Dates of the Month -->
-      <div 
-        *ngFor="let day of calendarDays" 
+      <div
+        *ngFor="let day of calendarDays"
+        class="calendar-day"
         [ngClass]="{
-          'day': day && !day.isCurrent && !day.isSelected,
-          'date': day,
           'current-day': day?.isCurrent,
           'selected-day': day?.isSelected
-        }" 
-        (click)="selectDay(day)">
-        {{ day?.day }}
+        }"
+        (click)="selectDay(day)"
+      >
+        {{ day?.day || '' }}
       </div>
     </div>
   </div>
@@ -47,37 +47,25 @@
 
 <!-- Seat Booking Section -->
 <div *ngIf="bookedSeat !== null" class="booking-message">
-  <p>Seat {{ bookedSeat.row }} - {{ bookedSeat.seat }} is {{ bookedSeat.status }}!</p>
+  <p>
+    Seat {{ bookedSeat.row }} - {{ bookedSeat.seat }} is {{ bookedSeat.status }}!
+  </p>
 </div>
 
 <div class="seat-container">
-  <!-- Loop through rows -->
   <div *ngFor="let row of rows; let rowIndex = index" class="seat-row">
-    <!-- Loop through seats -->
-    <div 
-      class="seat" 
-      *ngFor="let seat of row; let seatIndex = index" 
-      [ngClass]="{
-        'selected': seat.selected,
-        'booked': seat.booked
-      }" 
-      (click)="toggleSeat(rowIndex, seatIndex)">
+    <div
+      class="seat"
+      *ngFor="let seat of row; let seatIndex = index"
+      [ngClass]="{ 'selected': seat.selected, 'booked': seat.booked }"
+      (click)="toggleSeat(rowIndex, seatIndex)"
+    >
       Seat {{ getSeatNumber(rowIndex, seatIndex) }}
-
-      <!-- Book Button -->
-      <button 
-        *ngIf="seat.selected" 
-        class="book-btn" 
-        (click)="confirmBooking(rowIndex, seatIndex)">
+      <button *ngIf="seat.selected" (click)="confirmBooking(rowIndex, seatIndex)">
         Book
       </button>
-
-      <!-- Remove Booking Button -->
-      <button 
-        *ngIf="seat.booked" 
-        class="remove-btn" 
-        (click)="removeBooking(rowIndex, seatIndex)">
-        Remove Booking
+      <button *ngIf="seat.booked" (click)="removeBooking(rowIndex, seatIndex)">
+        Remove
       </button>
     </div>
   </div>
