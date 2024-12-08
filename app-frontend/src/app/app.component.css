@@ -23,7 +23,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin: 20px 10px;
+  
 }
 
 /* "Now Showing" Tab */
@@ -32,7 +32,7 @@ body {
   color: white;
   padding: 15px;
   border-radius: 10px;
-  width: 20%;
+  width: 17%;
   text-align: center;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -45,10 +45,12 @@ body {
 
 /* Screen Indicator */
 .screen {
+  margin-top: 10%;
   background-color: #333;
   color: white;
   padding: 15px;
   width: 60%;
+  height: 50px;
   font-size: 1.2rem;
   text-transform: uppercase;
   border-radius: 10px;
@@ -58,9 +60,10 @@ body {
 
 /* Calendar container */
 .calendar {
-  width: 20%;
+  width: 17%;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 20px;
+  height:250px;
   padding: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -149,12 +152,12 @@ body {
 .seat-row {
   display: flex;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 .seat {
-  width: 60px;
-  height: 50px;
+  width: 80px;
+  height: 60px;
   background-color: #bbb;
   border: 2px solid #999;
   display: flex;
@@ -163,7 +166,7 @@ body {
   font-weight: bold;
   cursor: pointer;
   user-select: none;
-  border-radius: 5px;
+  border-radius: 20px;
   transition: background-color 0.3s, transform 0.2s;
   margin: 5px;
   position: relative;
@@ -183,24 +186,23 @@ body {
   background-color: #dacd10;
   color: white;
   transform: scale(1.1);
+  border-color: #dacd10;
 }
 
 /* Buttons inside seats */
-.book-btn,
-.remove-btn {
+.book-btn {
   position: absolute;
-  padding: 3px 10px;
+  bottom: -10px; /* Move the "Book" button further below the seat */
+  left: 50%; /* Center the button horizontally */
+  transform: translateX(-50%); /* Adjust centering */
+  padding: 5px 12px;
   font-size: 0.8rem;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.book-btn {
-  bottom: -10px;
+  border-radius: 10px;
   background-color: #28a745;
   color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .book-btn:hover {
@@ -208,9 +210,18 @@ body {
 }
 
 .remove-btn {
-  top: -10px;
+  position: absolute;
+  top: -15px; /* Move the "Remove Booking" button above the seat */
+  left: 50%; /* Center the button horizontally */
+  transform: translateX(-50%); /* Adjust centering */
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 10px;
   background-color: #dc3545;
   color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .remove-btn:hover {

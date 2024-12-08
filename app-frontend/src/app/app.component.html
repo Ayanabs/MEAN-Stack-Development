@@ -61,11 +61,11 @@
       (click)="toggleSeat(rowIndex, seatIndex)"
     >
       Seat {{ getSeatNumber(rowIndex, seatIndex) }}
-      <button *ngIf="seat.selected" (click)="confirmBooking(rowIndex, seatIndex)">
+      <button class="book-btn" *ngIf="seat.selected" (click)="confirmBooking(rowIndex, seatIndex)">
         Book
       </button>
-      <button *ngIf="seat.booked" (click)="removeBooking(rowIndex, seatIndex)">
-        Remove
+      <button class="remove-btn" *ngIf="seat.booked" (click)="removeBooking(rowIndex, seatIndex)">
+        Cancel
       </button>
     </div>
   </div>

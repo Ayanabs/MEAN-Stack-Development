@@ -30,8 +30,12 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    const today = new Date();
+    this.selectedDay = { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
     this.generateCalendar();
+    this.loadBookingsForDate(today); // Load bookings for the current day
   }
+  
 
   generateCalendar(): void {
     const firstDayOfMonth = new Date(this.currentYear, this.currentMonth, 1);
@@ -83,25 +87,28 @@ export class AppComponent implements OnInit {
     if (day) {
       this.resetSeats(); // Reset seats when changing the day
       this.selectedDay = { day: day.day, month: this.currentMonth, year: this.currentYear };
-      const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-
-      // Fetch bookings for the selected day
-      this.http.get<any>(`http://localhost:5000/api/bookings/${formattedDate}`).subscribe({
-        next: (response) => {
-          if (response && response.seats) {
-            response.seats.forEach((seat: { row: number; seat: number }) => {
-              this.rows[seat.row - 1][seat.seat - 1].booked = true;
-            });
-          }
-        },
-        error: (err) => {
-          console.error('Error fetching bookings:', err);
-          this.resetSeats(); // Reset seats if no bookings are found
-        },
-      });
-
+      const selectedDate = new Date(this.selectedDay.year, this.selectedDay.month, this.selectedDay.day);
+      this.loadBookingsForDate(selectedDate);
       this.generateCalendar();
     }
+  }
+
+  loadBookingsForDate(date: Date): void {
+    const formattedDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+    this.http.get<any>(`http://localhost:5000/api/bookings/${formattedDate}`).subscribe({
+      next: (response) => {
+        if (response && response.seats) {
+          response.seats.forEach((seat: { row: number; seat: number }) => {
+            this.rows[seat.row - 1][seat.seat - 1].booked = true;
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching bookings:', err);
+        this.resetSeats();
+      },
+    });
   }
 
   resetSeats(): void {
@@ -128,9 +135,7 @@ export class AppComponent implements OnInit {
     if (seat.selected) {
       seat.booked = true;
       seat.selected = false;
-      this.bookedSeat = { row: rowIndex + 1, seat: seatIndex + 1, status: 'Booked' };
 
-      // Check if selectedDay is defined before proceeding
       if (this.selectedDay) {
         const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
         const seatData = {
@@ -142,14 +147,9 @@ export class AppComponent implements OnInit {
           ),
         };
 
-        // Send the booking to the backend
         this.http.post('http://localhost:5000/api/bookings', seatData).subscribe({
-          next: () => {
-            console.log('Booking saved to database!');
-          },
-          error: (err) => {
-            console.error('Error saving booking:', err);
-          },
+          next: () => console.log('Booking saved to database!'),
+          error: (err) => console.error('Error saving booking:', err),
         });
       } else {
         console.error('Error: No selected day to confirm booking.');
@@ -161,9 +161,7 @@ export class AppComponent implements OnInit {
     const seat = this.rows[rowIndex][seatIndex];
     if (seat.booked) {
       seat.booked = false;
-      this.bookedSeat = null;
 
-      // Check if selectedDay is defined before proceeding
       if (this.selectedDay) {
         const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
         const seatData = {
@@ -175,14 +173,9 @@ export class AppComponent implements OnInit {
           ),
         };
 
-        // Update the backend
         this.http.post('http://localhost:5000/api/bookings', seatData).subscribe({
-          next: () => {
-            console.log('Booking updated in database!');
-          },
-          error: (err) => {
-            console.error('Error updating booking:', err);
-          },
+          next: () => console.log('Booking updated in database!'),
+          error: (err) => console.error('Error updating booking:', err),
         });
       } else {
         console.error('Error: No selected day to remove booking.');
