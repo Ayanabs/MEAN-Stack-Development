@@ -1,0 +1,123 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  text-align: center;
+  margin: 0;
+}
+
+.header {
+  background-color: #222;
+  color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.screen {
+  background-color: #444;
+  color: #fff;
+  padding: 10px;
+  margin: 20px auto;
+  width: 60%;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  border-radius: 10px;
+  text-align: center;  /* Center-aligning the text */
+}
+
+.seat-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px; /* Increased gap between rows */
+}
+
+.seat {
+  width: 70px;
+  height: 60px;
+  background-color: #bbb;
+  border: 2px solid #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  border-radius: 10px;
+  transition: background-color 0.3s, transform 0.3s;
+  margin: 5px;
+  position: relative;
+}
+
+.seat.selected {
+  background-color: #dacd10; /* Initially selected as green */
+  color: white;
+  border-color: #dacd10;
+  transform: scale(1.1);
+}
+
+.seat.booked {
+  background-color: #e74c3c; /* Booked chairs are red */
+  color: white;
+  border-color: #c0392b;
+}
+
+.seat:hover {
+  background-color: #28a745;
+}
+.seat:hover.booked {
+  background-color: #e74c3c;
+}
+.seat:hover.selected {
+  background-color: #dacd10;
+}
+/* Book button styling (inside the seat) */
+.book-btn {
+  background-color: #fffefe;
+  color: rgb(0, 0, 0);
+  border: 2px solid #060606;
+  padding: 3px 9px;
+  font-size: 0.7rem;
+  border-radius: 8px;
+  position: absolute;
+  bottom: -8px; /* Position it below the seat */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-btn:hover {
+  background-color: #2e26bb;
+  border: none;
+  
+  
+  color: #fff;
+}
+
+/* Remove Booking button styling */
+.remove-btn {
+  background-color: #ff6347;
+  color: white;
+  border: none;
+  padding: 3px 8px;
+  font-size: 0.7rem; /* Smaller font size */
+  border-radius: 5px;
+  position: absolute;
+  top: -20px; /* Position it above the seat number */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.remove-btn:hover {
+  background-color: #e53e2e;
+}
+
+.booking-message {
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1px;
+  margin-bottom: 5px;
+  text-align: center;
+}
