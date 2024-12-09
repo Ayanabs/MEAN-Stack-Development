@@ -1,20 +1,18 @@
 const mongoose = require('mongoose');
 
-// Define schema for bookings
+// Booking schema
 const bookingSchema = new mongoose.Schema({
-  date: { type: String, required: true }, // Format: YYYY-MM-DD
-  movieName: { type: String, required: true }, // Name of the movie
-  showTime: { type: String, required: true }, // Show time (e.g., 10:00 AM)
+  date: { type: String, required: true },
+  movieName: { type: String, required: true },
+  showTime: { type: String, required: true },
   seats: [
     {
-      row: { type: Number, required: true }, // Row number of the seat
-      seat: { type: Number, required: true }, // Seat number in the row
-      booked: { type: Boolean, default: false }, // Booking status
+      row: { type: Number, required: true },
+      seat: { type: Number, required: true },
     },
   ],
 });
 
-// Create model for the 'bookings' collection
 const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;
