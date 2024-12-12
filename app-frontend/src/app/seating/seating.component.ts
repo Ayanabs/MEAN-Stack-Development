@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { BookingService } from './booking.service'; 
+import { MovieService } from './movie.service'; 
 
 @Component({
   selector: 'seat-root',
@@ -104,35 +106,39 @@ export class SeatingComponent implements OnInit {
   loadMovies(): void {
     this.http.get<any[]>('http://localhost:5000/api/movies').subscribe((movies) => {
       this.movies = movies;
-
+  
       if (this.movies.length > 0) {
-        this.selectedMovie = this.movies[0].name;
-        this.selectedMovieImage = this.movies[0].image;
-        this.selectedMovieTimes = this.movies[0].times;
-        this.selectedTime = this.selectedMovieTimes[0];
+        this.selectedMovie = this.movies[0].title;
+        this.selectedMovieImage = this.movies[0].imagePath;
+        this.selectedMovieTimes = this.movies[0].showTimes; // Accessing the showTimes array
+        this.selectedTime = this.selectedMovieTimes[0]; // Default to the first showtime
         this.loadBookingsForDate();
       }
     });
   }
 
   onMovieChange(): void {
-    const selectedMovie = this.movies.find((m) => m.name === this.selectedMovie);
+    // Find the selected movie by its title
+    const selectedMovie = this.movies.find((m) => m.title === this.selectedMovie);
     if (selectedMovie) {
-      this.selectedMovieImage = selectedMovie.image;
-      this.selectedMovieTimes = selectedMovie.times;
-      this.selectedTime = this.selectedMovieTimes[0];
-      this.loadBookingsForDate();
+      // Update the image and times for the selected movie
+      this.selectedMovieImage = selectedMovie.imagePath;
+      this.selectedMovieTimes = selectedMovie.showTimes;
+      this.selectedTime = this.selectedMovieTimes[0]; // Set default time
+      this.loadBookingsForDate(); // Load bookings for the selected movie and time
     }
   }
-
+  
   loadBookingsForDate(): void {
     if (!this.selectedDay || !this.selectedMovie || !this.selectedTime) {
-      // Ensure seats are reset if no valid booking context
       this.resetSeats();
       return;
     }
   
+    // Format the date for the API
     const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+  
+    // Construct the API URL with movie title and showtime
     const url = `http://localhost:5000/api/bookings/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
   
     // Reset seats before making the HTTP request
@@ -202,7 +208,7 @@ export class SeatingComponent implements OnInit {
 
     const bookingData = {
       date: formattedDate,
-      movieName: this.selectedMovie,
+      movie: this.selectedMovie,
       showTime: this.selectedTime,
       seats,
     };
