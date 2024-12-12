@@ -18,3 +18,4 @@ export class BookingService {
     return this.http.post(`${this.apiUrl}`, { date, seats });
   }
 }
+
