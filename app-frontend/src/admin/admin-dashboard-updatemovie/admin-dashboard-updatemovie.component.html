@@ -1,0 +1,55 @@
+<form name="movieUpdateForm" (ngSubmit)="onSubmit()" #movieUpdateForm="ngForm" novalidate>
+    <!-- Movie Name -->
+    <div class="form-group">
+        <label for="movieName">Movie Name:</label>
+        <input type="text" id="movieName" name="movieName" class="form-control" required [(ngModel)]="movie.movieName">
+        <div *ngIf="movieUpdateForm.submitted && !movie.movieName" class="error">
+            Movie name is required.
+        </div>
+    </div>
+
+    <!-- Category -->
+    <div class="form-group">
+        <label for="category">Category:</label>
+        <input type="text" id="category" name="category" class="form-control" required [(ngModel)]="movie.category">
+        <div *ngIf="movieUpdateForm.submitted && !movie.category" class="error">
+            Category is required.
+        </div>
+    </div>
+
+    <!-- Release Year -->
+    <div class="form-group">
+        <label for="releaseYear">Released Year:</label>
+        <input type="number" id="releaseYear" name="releaseYear" class="form-control" required min="1888"
+            max="{{ currentYear }}" [(ngModel)]="movie.releaseYear">
+        <div *ngIf="movieUpdateForm.submitted && !movie.releaseYear" class="error">
+            Released year is required and must be valid.
+        </div>
+    </div>
+
+    <!-- Picture -->
+    <div class="form-group">
+        <label for="picture">Movie Picture:</label>
+        <input type="file" id="picture" name="picture" class="form-control" (change)="onFileSelect($event)" required>
+        <div *ngIf="movieUpdateForm.submitted && !movie.picture" class="error">
+            Movie picture is required.
+        </div>
+    </div>
+
+    <!-- Display Current or Newly Selected Picture -->
+    <div *ngIf="movie.picture">
+        <label>Current Picture:</label>
+        <img [src]="movie.picturePreview || movie.picture" alt="Movie Picture" class="img-thumbnail mt-2" width="150" />
+    </div>
+
+
+    <!-- Additional Information -->
+    <div class="form-group">
+        <textarea id="additionalInfo" name="additionalInfo" class="form-control" [(ngModel)]="movie.additionalInfo">
+      {{ movie.additionalInfo || '' }}
+    </textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Update Movie</button>
+</form>

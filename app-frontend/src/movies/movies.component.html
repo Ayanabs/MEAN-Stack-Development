@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Cards</title>
+  
+
+</head>
+
+<body>
+
+  <div class="container mt-5">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+      <!-- Card Example -->
+      <div *ngFor="let movie of movies" class="col">
+        <div class="card">
+          <div class="image-container">
+            <img [src]="movie.picture" alt="{{ movie.movieName }}" class="card-img-top">
+            <div class="card-overlay"></div>
+            <button class="read-more-btn" (click)="onReadMore(movie)">Read More</button>
+          </div>
+          <h5 class="card-title mt-2">{{ movie.movieName }}</h5>
+          <p class="card-rating"><i class="bi bi-star-fill"></i> {{ movie.rating }}/10</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+
+</html>
