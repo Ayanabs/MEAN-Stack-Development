@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SeatingComponent } from '../seating/seating.component';
 // Removed incorrect import
-import { describe, beforeEach, it } from 'node:test';
+// import { describe, beforeEach, it } from 'node:test';
 
 describe('SeatingComponent', () => {
   beforeEach(async () => {
