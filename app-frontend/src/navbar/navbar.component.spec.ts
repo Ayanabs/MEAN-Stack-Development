@@ -6,7 +6,7 @@ import { HttpClientTestingModule,HttpTestingController } from '@angular/common/h
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
-  
+  let httpMock : HttpTestingController
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -15,10 +15,29 @@ describe('NavbarComponent', () => {
     .compileComponents();
 
     fixture = TestBed.createComponent(NavbarComponent);
-    
+    httpMock = TestBed.inject(HttpTestingController);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
+  it('should fetch movies', () => {
+    const mockMovies = [{ title: 'Movie 1' }, { title: 'Movie 2' }];
 
+    // Mock HTTP request
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockMovies);
+
+    // Validate results
+    expect(component.movies.length).toBe(2);
+    expect(component.movies).toEqual(mockMovies);
+  });
+
+  afterEach(() => {
+    httpMock.verify(); // Ensure no outstanding HTTP requests
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });
