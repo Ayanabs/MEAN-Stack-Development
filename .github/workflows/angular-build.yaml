@@ -1,12 +1,10 @@
-
 name: Angular Build
 
-# {1}
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "ci_pipeline_config" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "ci_pipeline_config" ]
 
 jobs:
   angular:
@@ -17,11 +15,11 @@ jobs:
         node-version: [20.14]
         
     steps:
-      # {2}
+      # Step 1: Checkout the source code
       - name: Checkout the source code
         uses: actions/checkout@v4
 
-      # {3}
+      # Step 2: Setup Node.js 
       - name: Setup Node.js 
         uses: actions/setup-node@v4
         with:
@@ -29,12 +27,21 @@ jobs:
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
-      # {4}
+      # Step 3: Install Angular CLI globally
+      - name: Install Angular CLI globally
+        run: npm install -g @angular/cli
+
+      # Step 4: Install dependencies
       - name: Install dependencies
         run: npm ci
-      # {5}
+       
+
+      # Step 5: Run tests
       - name: Run tests
-        run: npm run test:ci
-      # {6}
+        run: ng test --no-watch --no-progress --browsers=ChromeHeadless
+       
+
+      # Step 6: Build the Angular application
       - name: Build
-        run: npm run build
+        run: ng build
+       
