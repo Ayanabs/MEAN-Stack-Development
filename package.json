@@ -9,5 +9,6 @@
   },
   "scripts": {
     "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
+
   }
 }
