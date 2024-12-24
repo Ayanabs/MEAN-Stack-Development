@@ -17,7 +17,7 @@ describe('SinglemovieComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             paramMap: of({
-              get: (key: string) => (key === '_id' ? '123' : null), // Mock `paramMap` with test data
+              get: (key: string) => (key === 'id' ? '123' : null), // Mock `paramMap` with test data
             }),
           },
         },
