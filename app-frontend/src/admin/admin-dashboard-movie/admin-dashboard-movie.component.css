@@ -1,0 +1,79 @@
+/* Styling for action icons */
+.btn i {
+    font-size: 1rem;
+  }
+  
+  /* Add hover effect for buttons */
+  .btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+  }
+  
+  /* Responsive table adjustments */
+  @media (max-width: 768px) {
+    .input-group {
+      flex-direction: column;
+    }
+  
+    .input-group select,
+    .input-group input {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  /* Overlay for the popup */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Popup container */
+.popup-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+}
+
+  /* Smooth Scroll Styling */
+.scrollable-container {
+  max-height: 80vh; /* Adjust height based on your requirements */
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+/* Smooth scrolling for all browsers */
+.scrollable-container {
+  scroll-behavior: smooth;
+}
+
+.scrollable-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background-color: #007bff;
+  border-radius: 4px;
+}
+
+
