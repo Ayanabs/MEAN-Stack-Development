@@ -17,7 +17,7 @@ describe('SinglemovieComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             paramMap: of({
-              get: (key: string) => (key === '_id' ? '6762b101f46cadc2eb1da553' : null), // Mock `paramMap` with test data
+              get: (key: string) => (key === '_id' ? '123' : null), // Mock `paramMap` with test data
             }),
           },
         },
@@ -36,6 +36,6 @@ describe('SinglemovieComponent', () => {
 
   it('should fetch movie details for ID', () => {
     // Validate that the correct ID is being used
-    expect(component.movieId).toBe('6762b101f46cadc2eb1da553');
+    expect(component.movieId).toBe('123');
   });
 });

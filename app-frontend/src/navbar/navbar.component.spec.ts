@@ -21,7 +21,7 @@ describe('NavbarComponent', () => {
   });
 
   it('should fetch movies', () => {
-    const mockMovies = [{ title: 'Movie 1' }, { title: 'Movie 2' }];
+    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
     // Mock HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
