@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminMovieComponent } from './admin-movie.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AdminMovieComponent', () => {
   let component: AdminMovieComponent;
@@ -8,7 +9,7 @@ describe('AdminMovieComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminMovieComponent]
+      imports: [AdminMovieComponent,HttpClientTestingModule]
     })
     .compileComponents();
 

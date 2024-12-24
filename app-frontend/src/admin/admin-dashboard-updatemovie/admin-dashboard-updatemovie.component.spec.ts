@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminDashboardUpdatemovieComponent } from './admin-dashboard-updatemovie.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('AdminDashboardUpdatemovieComponent', () => {
   let component: AdminDashboardUpdatemovieComponent;
@@ -8,7 +9,7 @@ describe('AdminDashboardUpdatemovieComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminDashboardUpdatemovieComponent]
+      imports: [AdminDashboardUpdatemovieComponent,HttpClientTestingModule]
     })
     .compileComponents();
 
