@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { SeatingComponent } from '../seating/seating.component';
-// Removed incorrect import
-import { describe, beforeEach, it } from 'node:test';
+
+//import { describe, beforeEach, it } from 'node:test';
 
 describe('SeatingComponent', () => {
   beforeEach(async () => {
@@ -27,7 +27,7 @@ describe('SeatingComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const titleText = compiled.querySelector('h1')?.textContent;
-    expect(titleText).toContain('Hello, app-frontend');
+    expect(titleText).toContain('Welcome to CineBooking');
   });
 });
 function expect(value: any) {

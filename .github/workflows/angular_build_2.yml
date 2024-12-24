@@ -1,0 +1,57 @@
+
+name: Angular Build
+
+# {1}
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  angular:
+    name: Angular Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.14]
+        
+    steps:
+      # {2}
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+        
+      # {4}
+      - name: Setup Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.14
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+          
+        # Step 3: Install dependencies for the backend
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: app-backend
+
+      # Step 4: Start the backend server
+      - name: Start Backend Server
+        run: node backend.js &
+        working-directory: app-backend
+
+      # Step 5: Wait for the backend to start
+      - name: Wait for Backend to Start
+        run: sleep 10
+
+      # {5}
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: app-frontend
+      # {6}
+      - name: Run frontend tests
+        run: npm run test:ci
+        working-directory: app-frontend
+      # {7}
+      - name: Build frontend
+        run: npm run build
+        working-directory: app-frontend
