@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SinglemovieComponent } from './singlemovie.component';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 describe('SinglemovieComponent', () => {
   let component: SinglemovieComponent;
@@ -14,7 +15,11 @@ describe('SinglemovieComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: {},
+          useValue: {
+            paramMap: of({
+              get: (key: string) => (key === 'id' ? '123' : null), // Mock `paramMap` with test data
+            }),
+          },
         },
       ],
     })
@@ -27,5 +32,10 @@ describe('SinglemovieComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should fetch movie details for ID', () => {
+    // Validate that the correct ID is being used
+    expect(component.movieId).toBe('123');
   });
 });

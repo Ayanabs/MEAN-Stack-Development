@@ -33,7 +33,6 @@ describe('MoviesComponent', () => {
     req.flush(mockMovies);
 
     // Validate results
-    expect(component.movies.length).toBe(2);
     expect(component.movies).toEqual(mockMovies);
   });
 
@@ -41,7 +40,5 @@ describe('MoviesComponent', () => {
     httpMock.verify(); // Ensure no outstanding HTTP requests
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+  
 });
