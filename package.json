@@ -6,5 +6,6 @@
     "express": "^4.21.2",
     "mongoose": "^8.8.4",
     "tslib": "^2.8.1"
-  }
+  },
+  "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
 }
