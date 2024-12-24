@@ -28,9 +28,9 @@ describe('MoviesComponent', () => {
     const mockMovies = [{ title: 'Movie 1' }, { title: 'Movie 2' }];
 
     // Mock HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies'); // Ensure the URL matches exactly
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies);
+    req.flush(mockMovies); // Return mock data
 
     // Validate results
     expect(component.movies).toEqual(mockMovies);
