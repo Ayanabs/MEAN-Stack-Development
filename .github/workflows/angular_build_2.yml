@@ -20,11 +20,7 @@ jobs:
       # {2}
       - name: Checkout the source code
         uses: actions/checkout@v4
-
-      # {3}
-      - name: Install Angular CLI globally
-        run: npm install -g @angular/cli
-
+        
       # {4}
       - name: Setup Node.js 
         uses: actions/setup-node@v4
