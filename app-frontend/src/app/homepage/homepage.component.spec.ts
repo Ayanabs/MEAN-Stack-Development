@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ActivatedRoute } from '@angular/router';
 import { HomepageComponent } from './homepage.component';
+import { of } from 'rxjs';
 
 describe('HomepageComponent', () => {
   let component: HomepageComponent;
@@ -8,7 +9,13 @@ describe('HomepageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomepageComponent]
+      declarations: [HomepageComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {},
+        },
+      ],
     })
     .compileComponents();
 
