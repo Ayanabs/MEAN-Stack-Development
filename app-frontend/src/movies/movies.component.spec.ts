@@ -26,12 +26,10 @@ describe('MoviesComponent', () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
     // Trigger ngOnInit (fetchMovies is called here)
-    component.fetchMovies();
+    fixture.detectChanges();
 
     // Mock HTTP request
-    const req = httpMock.expectOne(request => {
-      console.log('Requested URL:', request.url);
-      return request.url.includes('/api/users/getmovies');});
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies); // Simulate backend response
 
