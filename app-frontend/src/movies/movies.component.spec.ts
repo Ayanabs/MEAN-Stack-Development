@@ -9,39 +9,55 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent, HttpClientTestingModule],
+      imports: [HttpClientTestingModule], // Include HttpClientTestingModule
+      declarations: [MoviesComponent], // Declare the component
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
-    fixture.detectChanges(); // This triggers ngOnInit and the HTTP call
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies', fakeAsync(() => {
+  it('should fetch movies successfully', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
-       // Trigger ngOnInit
-       fixture.detectChanges();
+    // Trigger ngOnInit (fetchMovies is called here)
+    fixture.detectChanges();
 
-    // Simulate backend response
+    // Mock HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies); // Provide mock data
+    req.flush(mockMovies); // Simulate backend response
 
-    // Validate results
-    tick(); // Resolve any remaining async operations
+    // Resolve async operations
+    tick();
+
+    // Validate component data
     expect(component.movies).toEqual(mockMovies);
   }));
 
+  it('should handle HTTP error', fakeAsync(() => {
+    // Trigger ngOnInit
+    fixture.detectChanges();
 
+    // Simulate backend error
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    expect(req.request.method).toBe('GET');
+    req.flush(null, { status: 500, statusText: 'Internal Server Error' });
 
+    // Resolve async operations
+    tick();
+
+    // Validate component state after error
+    expect(component.movies).toEqual([]); // Assuming movies remains empty on error
+  }));
 
   afterEach(() => {
-    httpMock.verify(); // Ensure no outstanding HTTP requests
+    // Ensure no outstanding HTTP requests
+    httpMock.verify();
   });
 });
