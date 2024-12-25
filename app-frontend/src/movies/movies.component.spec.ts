@@ -32,7 +32,7 @@ describe('MoviesComponent', () => {
     // Trigger change detection to simulate ngOnInit lifecycle and HTTP request
     fixture.detectChanges();
     // Simulate the component making the HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    const req = httpMock.expectOne('http://host.docker.internal:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET'); // Assert that the request is a GET
 
     // Provide the mock response
