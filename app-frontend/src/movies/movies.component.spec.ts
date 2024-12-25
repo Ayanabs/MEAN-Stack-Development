@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -26,28 +26,27 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies successfully', fakeAsync(() => {
+  it('should fetch movies successfully', async () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
-
+    
     // Trigger change detection to simulate ngOnInit lifecycle and HTTP request
     fixture.detectChanges();
-
-    // Now, we are intercepting the HTTP request made by the component
+    // Simulate the component making the HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET'); // Assert that the request is a GET
 
     // Provide the mock response
     req.flush(mockMovies); // Respond with mock data
 
-    // Resolve async operations (simulate passage of time)
-    tick();
+    // Wait for asynchronous operation to complete
+    await fixture.whenStable(); // Wait for async operations to finish
 
     // Validate that the component’s movies property was updated correctly
     expect(component.movies).toEqual(mockMovies);
 
     // Verify no outstanding HTTP requests remain
     httpMock.verify();
-  }));
+  });
 
   afterEach(() => {
     // Ensure that no outstanding HTTP requests are left
