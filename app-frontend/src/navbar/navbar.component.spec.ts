@@ -28,7 +28,7 @@ describe('NavbarComponent', () => {
     component.onSearch();
   
     // Mock HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?movieName=Movie');
+    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?name=Movie');
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies);
   
