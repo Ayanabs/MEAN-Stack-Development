@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
-import {  HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -20,11 +19,9 @@ describe('MoviesComponent', () => {
     httpMock = TestBed.inject(HttpTestingController);
 
     console.log('Before ngOnInit');
-
-       component.ngOnInit();
-
-       console.log('After ngOnInit');
-    fixture.detectChanges(); // This triggers ngOnInit and the HTTP call
+    component.ngOnInit(); // Calling ngOnInit explicitly to trigger the HTTP request
+    console.log('After ngOnInit');
+    fixture.detectChanges(); // Trigger change detection, which should invoke HTTP call
   });
 
   it('should create', () => {
@@ -33,36 +30,34 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies successfully', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+    
+    // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
+    console.log('Triggering detectChanges...');
+    fixture.detectChanges();
 
-      // Debug log to check if the fetchMovies method is being called
-      console.log('Triggering detectChanges...');
-
-
-    // Log to ensure ngOnInit is called and the request is made
     console.log('DetectChanges triggered, waiting for HTTP request...');
-
-
-
-    // Mock HTTP request
+    
+    // Intercept the HTTP request and mock its response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    
+    // Log the HTTP request made
     console.log('HTTP request made to:', req.request.url);
+    
+    // Ensure the request method is GET
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies); // Simulate backend response
+    
+    // Mock backend response
+    req.flush(mockMovies); // Simulate the response with mock data
 
-    // Resolve async operations
+    // Resolve any asynchronous operations (like the HTTP request)
     tick();
 
-    // Validate component data
-
+    // Validate that the component's movies property has been updated correctly
     console.log('Fetched movies:', component.movies);
     expect(component.movies).toEqual(mockMovies);
   }));
 
-
-
-
-
   afterEach(() => {
-    httpMock.verify(); // Ensure no outstanding HTTP requests
+    httpMock.verify(); // Ensure no outstanding HTTP requests are pending
   });
 });
