@@ -17,8 +17,11 @@ describe('MoviesComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
 
-       // Add a console log to check if the component is being initialized correctly
-       console.log('Creating component...');
+    console.log('Before ngOnInit');
+
+       component.ngOnInit();
+
+       console.log('After ngOnInit');
     fixture.detectChanges(); // This triggers ngOnInit and the HTTP call
   });
 
@@ -32,13 +35,11 @@ describe('MoviesComponent', () => {
       // Debug log to check if the fetchMovies method is being called
       console.log('Triggering detectChanges...');
 
-    // Trigger ngOnInit (fetchMovies is called here)
-    fixture.detectChanges();
 
     // Log to ensure ngOnInit is called and the request is made
     console.log('DetectChanges triggered, waiting for HTTP request...');
 
-    
+
 
     // Mock HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
@@ -49,6 +50,8 @@ describe('MoviesComponent', () => {
     tick();
 
     // Validate component data
+
+    console.log('Fetched movies:', component.movies);
     expect(component.movies).toEqual(mockMovies);
   }));
 
