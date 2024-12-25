@@ -2,14 +2,12 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { MoviesComponent } from './movies.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule,HttpClient } from '@angular/common/http';
-import { Data } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
   let fixture: ComponentFixture<MoviesComponent>;
   let httpMock: HttpTestingController;
-  let httpClient: HttpClient;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -19,12 +17,11 @@ describe('MoviesComponent', () => {
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
-    httpClient = TestBed.inject(HttpClient);
 
-    console.log('Before ngOnInit');
-    component.ngOnInit(); // Calling ngOnInit explicitly to trigger the HTTP request
-    console.log('After ngOnInit');
-    fixture.detectChanges(); // Trigger change detection, which should invoke HTTP call
+    // Triggering change detection automatically calls ngOnInit()
+    console.log('Before detectChanges');
+    fixture.detectChanges(); // Trigger ngOnInit and HTTP call automatically
+    console.log('After detectChanges');
   });
 
   it('should create', () => {
@@ -34,20 +31,10 @@ describe('MoviesComponent', () => {
   it('should fetch movies successfully', fakeAsync(() => {
     const mockMovies = [{ name: 'Movie 1' }, { name: 'Movie 2' }];
 
-     // Make an HTTP GET request
-     httpClient.get<Data>('http://localhost:5000/api/users/getmovies')
-  .subscribe(data =>
-    // When observable resolves, result should match test data
-    expect(data).toEqual(mockMovies)
-  );
+    console.log('Triggering detectChanges...');
+    fixture.detectChanges(); // Ensures ngOnInit and HTTP request are triggered
+    console.log('DetectChanges triggered, waiting for HTTP request...');
 
-    
-    // // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
-    // console.log('Triggering detectChanges...');
-    // fixture.detectChanges();
-
-    // console.log('DetectChanges triggered, waiting for HTTP request...');
-    
     // Intercept the HTTP request and mock its response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     
@@ -60,7 +47,7 @@ describe('MoviesComponent', () => {
     // Mock backend response
     req.flush(mockMovies); // Simulate the response with mock data
 
-    // Resolve any asynchronous operations (like the HTTP request)
+    // Resolve any asynchronous operations
     tick();
 
     // Validate that the component's movies property has been updated correctly
