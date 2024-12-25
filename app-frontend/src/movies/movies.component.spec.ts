@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import {  HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 
 describe('MoviesComponent', () => {
@@ -10,7 +12,7 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent, HttpClientTestingModule]
+      imports: [MoviesComponent, HttpClientTestingModule, CommonModule, HttpClientModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
