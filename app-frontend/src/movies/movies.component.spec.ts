@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
@@ -9,11 +9,11 @@ describe('MoviesComponent', () => {
   let fixture: ComponentFixture<MoviesComponent>;
   let httpClientSpy: jasmine.SpyObj<HttpClient>;  // Mock HttpClient
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     // Create a spy for the HttpClient
     httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
     
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [MoviesComponent, HttpClientModule, CommonModule],
       providers: [
         { provide: HttpClient, useValue: httpClientSpy }  // Override HttpClient with our spy
@@ -26,13 +26,13 @@ describe('MoviesComponent', () => {
     // Mock the HTTP response for the 'get' method
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
     httpClientSpy.get.and.returnValue(of(mockMovies));  // Return the mock data as an observable
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies successfully', fakeAsync(() => {
+  it('should fetch movies successfully', waitForAsync(() => {
     // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
     fixture.detectChanges();
 
@@ -40,11 +40,11 @@ describe('MoviesComponent', () => {
     // Validate that the spy's get method was called once with the expected URL
     expect(httpClientSpy.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
     
-    // Simulate the asynchronous operation
-    tick();
-
-    // Validate the component's movies property has been updated correctly
-    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
+    // Wait for async operations to finish
+    fixture.whenStable().then(() => {
+      // Validate the component's movies property has been updated correctly
+      expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
+    });
   }));
 
   afterEach(() => {
