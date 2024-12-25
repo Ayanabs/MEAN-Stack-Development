@@ -15,8 +15,7 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        options: >
-            --restart=always
+       
 
 
     strategy:
