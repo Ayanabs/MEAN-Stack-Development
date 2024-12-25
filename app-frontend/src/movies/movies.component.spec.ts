@@ -1,27 +1,31 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';  // Import 'of' to return an observable.
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
   let fixture: ComponentFixture<MoviesComponent>;
-  let httpMock: HttpTestingController;
+  let httpClientSpy: jasmine.SpyObj<HttpClient>;  // Mock HttpClient
 
   beforeEach(async () => {
+    // Create a spy for the HttpClient
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+    
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent, HttpClientTestingModule, CommonModule, HttpClientModule]
+      imports: [MoviesComponent, HttpClientModule, CommonModule],
+      providers: [
+        { provide: HttpClient, useValue: httpClientSpy }  // Override HttpClient with our spy
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController);
 
-    // Triggering change detection automatically calls ngOnInit()
-    console.log('Before detectChanges');
-    fixture.detectChanges(); // Trigger ngOnInit and HTTP call automatically
-    console.log('After detectChanges');
+    // Mock the HTTP response for the 'get' method
+    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+    httpClientSpy.get.and.returnValue(of(mockMovies));  // Return the mock data as an observable
   });
 
   it('should create', () => {
@@ -29,33 +33,21 @@ describe('MoviesComponent', () => {
   });
 
   it('should fetch movies successfully', fakeAsync(() => {
-    const mockMovies = [{ name: 'Movie 1' }, { name: 'Movie 2' }];
+    // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
+    fixture.detectChanges();
 
-    console.log('Triggering detectChanges...');
-    fixture.detectChanges(); // Ensures ngOnInit and HTTP request are triggered
-    console.log('DetectChanges triggered, waiting for HTTP request...');
-
-    // Intercept the HTTP request and mock its response
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    // Since we are using a spy, we don't need to use HttpTestingController
+    // Validate that the spy's get method was called once with the expected URL
+    expect(httpClientSpy.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
     
-    // Log the HTTP request made
-    console.log('HTTP request made to:', req.request.url);
-    
-    // Ensure the request method is GET
-    expect(req.request.method).toBe('GET');
-    
-    // Mock backend response
-    req.flush(mockMovies); // Simulate the response with mock data
-
-    // Resolve any asynchronous operations
+    // Simulate the asynchronous operation
     tick();
 
-    // Validate that the component's movies property has been updated correctly
-    console.log('Fetched movies:', component.movies);
-    expect(component.movies).toEqual(mockMovies);
+    // Validate the component's movies property has been updated correctly
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
   }));
 
   afterEach(() => {
-    httpMock.verify(); // Ensure no outstanding HTTP requests are pending
+    // Nothing to verify here as we're using Jasmine spy directly
   });
 });

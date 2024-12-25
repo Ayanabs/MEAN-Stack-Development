@@ -13,7 +13,7 @@ import { AdminDashboardMovieComponent } from '../admin/admin-dashboard-movie/adm
 
 
 export const routes: Routes = [
-    { path: '', component: AdminDashboardMovieComponent }, // Default route
+    { path: '', component: MoviesComponent }, // Default route
     { path: 'userlogin', component: UserloginComponent },
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'usersignup', component: UsersignupComponent },
