@@ -9,13 +9,13 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // Include HttpClientTestingModule
-      declarations: [MoviesComponent], // Declare the component
+      imports: [MoviesComponent, HttpClientTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
+    fixture.detectChanges(); // This triggers ngOnInit and the HTTP call
   });
 
   it('should create', () => {
@@ -56,8 +56,10 @@ describe('MoviesComponent', () => {
     expect(component.movies).toEqual([]); // Assuming movies remains empty on error
   }));
 
+
+
+
   afterEach(() => {
-    // Ensure no outstanding HTTP requests
-    httpMock.verify();
+    httpMock.verify(); // Ensure no outstanding HTTP requests
   });
 });
