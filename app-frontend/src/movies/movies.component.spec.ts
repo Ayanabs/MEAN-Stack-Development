@@ -2,12 +2,14 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { MoviesComponent } from './movies.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule,HttpClient } from '@angular/common/http';
+import { Data } from '@angular/router';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
   let fixture: ComponentFixture<MoviesComponent>;
   let httpMock: HttpTestingController;
+  let httpClient: HttpClient;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -17,6 +19,7 @@ describe('MoviesComponent', () => {
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
+    httpClient = TestBed.inject(HttpClient);
 
     console.log('Before ngOnInit');
     component.ngOnInit(); // Calling ngOnInit explicitly to trigger the HTTP request
@@ -30,12 +33,20 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies successfully', fakeAsync(() => {
     const mockMovies = [{ name: 'Movie 1' }, { name: 'Movie 2' }];
-    
-    // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
-    console.log('Triggering detectChanges...');
-    fixture.detectChanges();
 
-    console.log('DetectChanges triggered, waiting for HTTP request...');
+     // Make an HTTP GET request
+     httpClient.get<Data>('http://localhost:5000/api/users/getmovies')
+  .subscribe(data =>
+    // When observable resolves, result should match test data
+    expect(data).toEqual(mockMovies)
+  );
+
+    
+    // // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
+    // console.log('Triggering detectChanges...');
+    // fixture.detectChanges();
+
+    // console.log('DetectChanges triggered, waiting for HTTP request...');
     
     // Intercept the HTTP request and mock its response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
