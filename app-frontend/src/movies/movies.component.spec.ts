@@ -15,30 +15,31 @@ describe('MoviesComponent', () => {
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
+    fixture.detectChanges(); // This triggers ngOnInit and the HTTP call
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies successfully', fakeAsync(() => {
+  it('should fetch movies', async() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
-    // Trigger ngOnInit
-    fixture.detectChanges();
+    // Trigger HTTP request
+    component.fetchMovies();
 
-    // Expect the HTTP request
+    // Simulate backend response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies); // Mock backend response
+    req.flush(mockMovies); // Provide mock data for the request
 
-    tick(); // Simulate async delay
+    
 
-    // Assert the result
+    // Validate results
     expect(component.movies).toEqual(mockMovies);
-  }));
-
-  it('should handle HTTP error when fetching movies', fakeAsync(() => {
+  });
+  
+  it('should handle HTTP error when fetching movies', async() => {
     const errorResponse = {
       status: 500,
       statusText: 'Internal Server Error',
@@ -56,7 +57,7 @@ describe('MoviesComponent', () => {
 
     // Assert the movies array is empty
     expect(component.movies).toEqual([]);
-  }));
+  });
 
   afterEach(() => {
     httpMock.verify(); // Ensure no outstanding HTTP requests
