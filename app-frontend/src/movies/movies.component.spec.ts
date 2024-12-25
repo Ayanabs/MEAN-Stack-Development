@@ -29,7 +29,7 @@ describe('MoviesComponent', () => {
   });
 
   it('should fetch movies successfully', fakeAsync(() => {
-    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+    const mockMovies = [{ name: 'Movie 1' }, { name: 'Movie 2' }];
     
     // Triggering detectChanges to simulate ngOnInit lifecycle and HTTP request
     console.log('Triggering detectChanges...');
