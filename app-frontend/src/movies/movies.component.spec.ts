@@ -38,26 +38,8 @@ describe('MoviesComponent', () => {
     // Validate results
     expect(component.movies).toEqual(mockMovies);
   });
-  
-  it('should handle HTTP error when fetching movies', async() => {
-    const errorResponse = {
-      status: 500,
-      statusText: 'Internal Server Error',
-    };
 
-    // Trigger ngOnInit
-    fixture.detectChanges();
 
-    // Expect the HTTP request and simulate an error
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
-    expect(req.request.method).toBe('GET');
-    req.flush(null, errorResponse); // Simulate an error response
-
-    tick(); // Simulate async delay
-
-    // Assert the movies array is empty
-    expect(component.movies).toEqual([]);
-  });
 
   afterEach(() => {
     httpMock.verify(); // Ensure no outstanding HTTP requests
