@@ -1,7 +1,8 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import { MoviesComponent } from './movies.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -24,7 +25,7 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies', fakeAsync(() => {
+  it('should fetch movies', async() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
     // Call fetchMovies explicitly
@@ -39,7 +40,7 @@ describe('MoviesComponent', () => {
     
     // Validate results
     expect(component.movies).toEqual(mockMovies);
-  }));
+  });
 
 
   afterEach(() => {
