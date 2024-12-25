@@ -10,8 +10,7 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule],
-      declarations: [MoviesComponent]
+      imports: [MoviesComponent, HttpClientTestingModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
