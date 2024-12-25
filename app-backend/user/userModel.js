@@ -39,5 +39,5 @@ const userSchema = new mongoose_1.Schema({
     password: { type: String, required: true },
     email: { type: String, required: true },
 });
-const userModel = mongoose_1.default.model('userModel', userSchema, 'angular_collection');
+const userModel = mongoose_1.default.model('userModel', userSchema, 'user_collection');
 exports.default = userModel;

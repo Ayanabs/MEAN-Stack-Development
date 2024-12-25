@@ -54,8 +54,6 @@ router.put('/updatemovie/:id', upload.single('picture'), (req, res) => __awaiter
         // If a new picture is uploaded
         if (req.file) {
             const oldPicturePath = path_1.default.join(process.cwd(), 'uploads', path_1.default.basename(existingMovie.picture));
-            // Log the paths for debugging
-            console.log('Old picture path:', oldPicturePath);
             // Check if the old picture exists and delete it
             if (fs_1.default.existsSync(oldPicturePath)) {
                 console.log('Deleting old picture:', oldPicturePath);

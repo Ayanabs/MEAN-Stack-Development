@@ -14,6 +14,6 @@ const userSchema = new Schema<IUser>({
     email: { type: String, required: true },
 });
 
-const userModel = mongoose.model<IUser>('userModel', userSchema,'angular_collection');
+const userModel = mongoose.model<IUser>('userModel', userSchema,'user_collection');
 
 export default userModel;

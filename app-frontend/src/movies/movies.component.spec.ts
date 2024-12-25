@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { MoviesComponent } from './movies.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -10,9 +10,9 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent,HttpClientTestingModule]
+      imports: [MoviesComponent, HttpClientTestingModule]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
@@ -24,21 +24,27 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies', () => {
+  it('should fetch movies', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
-    // Mock HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies'); // Ensure the URL matches exactly
-    expect(req.request.method).toBe('GET');
-    req.flush(mockMovies); // Return mock data
+    // Call fetchMovies explicitly
+    component.fetchMovies();
 
+    // Mock HTTP request
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockMovies);
+
+    tick(); // Simulate async delay
+    
     // Validate results
     expect(component.movies).toEqual(mockMovies);
-  });
+  }));
+
 
   afterEach(() => {
     httpMock.verify(); // Ensure no outstanding HTTP requests
   });
 
-  
+
 });
