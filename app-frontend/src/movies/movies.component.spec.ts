@@ -43,6 +43,7 @@ describe('MoviesComponent', () => {
 
     // Mock HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    console.log('HTTP request made to:', req.request.url);
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies); // Simulate backend response
 
