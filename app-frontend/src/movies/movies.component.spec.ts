@@ -25,7 +25,7 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies', async() => {
+  it('should fetch movies', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
     // Call fetchMovies explicitly
@@ -36,13 +36,16 @@ describe('MoviesComponent', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies);
 
-    tick(); // Simulate async delay
+    httpMock.match((req) => {
+      console.log('Request URL:', req.url);
+      return true;
+    });
     
     // Validate results
     expect(component.movies).toEqual(mockMovies);
-  });
+  }));
 
-
+ 
   afterEach(() => {
     httpMock.verify(); // Ensure no outstanding HTTP requests
   });
