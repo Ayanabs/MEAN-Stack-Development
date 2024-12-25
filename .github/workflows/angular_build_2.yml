@@ -16,8 +16,8 @@ jobs:
         ports:
           - 27017:27017
         options: >
-          --health-cmd='echo "db.adminCommand({ping: 1})" | mongo localhost:27017/sample --quiet'
-          --health-interval=10s --health-timeout=5s --health-retries=3
+            --restart=always
+
 
     strategy:
       matrix:
