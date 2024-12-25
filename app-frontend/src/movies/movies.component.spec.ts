@@ -24,13 +24,9 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
-    
+
        // Trigger ngOnInit
        fixture.detectChanges();
-
-    // Trigger the HTTP request
-    component.fetchMovies();
-    tick(); // Simulate async passage of time
 
     // Simulate backend response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
