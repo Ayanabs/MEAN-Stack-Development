@@ -22,22 +22,26 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies', async() => {
+  it('should fetch movies', fakeAsync(() => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+    
+       // Trigger ngOnInit
+       fixture.detectChanges();
 
-    // Trigger HTTP request
+    // Trigger the HTTP request
     component.fetchMovies();
+    tick(); // Simulate async passage of time
 
     // Simulate backend response
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies); // Provide mock data for the request
-
-    
+    req.flush(mockMovies); // Provide mock data
 
     // Validate results
+    tick(); // Resolve any remaining async operations
     expect(component.movies).toEqual(mockMovies);
-  });
+  }));
+
 
 
 
