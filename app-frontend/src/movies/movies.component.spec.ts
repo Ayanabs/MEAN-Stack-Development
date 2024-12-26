@@ -10,28 +10,35 @@ describe('MoviesComponent', () => {
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(async () => {
+    // Create a mock for HttpClient
     mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
 
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent, CommonModule],
-      providers: [{ provide: HttpClient, useValue: mockHttpClient }],
+      imports: [MoviesComponent,CommonModule], 
+      providers: [{ provide: HttpClient, useValue: mockHttpClient }], // Provide the mock HttpClient
     }).compileComponents();
 
+    // Create the component instance
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
   it('should fetch movies successfully', () => {
+    // Mock data
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
     mockHttpClient.get.and.returnValue(of(mockMovies)); // Mock HTTP response
 
-    fixture.detectChanges(); // Trigger ngOnInit
+    // Trigger ngOnInit
+    fixture.detectChanges();
 
-    expect(component.movies).toEqual(mockMovies); // Validate the data
-    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies'); // Verify the API URL
+    // Validate that movies were fetched and set in the component
+    expect(component.movies).toEqual(mockMovies);
+
+    // Validate that the correct API URL was called
+    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
   });
 });
