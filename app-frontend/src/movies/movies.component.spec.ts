@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
-import { CommonModule } from '@angular/common';
-import { of } from 'rxjs'; // Import 'of' to return mock observable.
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { importProvidersFrom } from '@angular/core';
+import { of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -11,18 +9,19 @@ describe('MoviesComponent', () => {
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(async () => {
-    // Create a mock for HttpClient
+    // Mock HttpClient
     mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
-    mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }])); // Immediate mock setup
+    mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]));
 
+    // Configure TestBed
     await TestBed.configureTestingModule({
-      imports: [CommonModule, HttpClientModule, MoviesComponent], // Include all necessary modules
+      imports: [MoviesComponent], // Import standalone component
       providers: [
-        { provide: HttpClient, useValue: mockHttpClient }, // Mock HttpClient
+        { provide: HttpClient, useValue: mockHttpClient }, // Provide mock HttpClient
       ],
     }).compileComponents();
 
-    // Create the component instance
+    // Create component instance
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
   });
@@ -33,8 +32,10 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies successfully', () => {
     fixture.detectChanges(); // Trigger ngOnInit
+    console.log('Mock HttpClient calls:', mockHttpClient.get.calls.all()); // Debug
 
-    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Validate fetched movies
-    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies'); // Validate API call
+    // Validate movies are fetched
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
+    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
   });
 });
