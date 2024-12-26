@@ -17,16 +17,8 @@ export const routes: Routes = [
     { path: 'userlogin', component: UserloginComponent },
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'usersignup', component: UsersignupComponent },
-    { path: 'singlemovie/:id', component: SinglemovieComponent ,resolve: { params: getPrerenderParams }},
+    { path: 'singlemovie/:id', component: SinglemovieComponent},
 
 ];
 
-// Function to handle prerendering parameters for the singlemovie/:id route
-export function getPrerenderParams() {
-    // Replace the following IDs with the dynamic IDs you want to prerender
-    return [
-        { id: '1' },
-        { id: '2' },
-        { id: '3' }
-    ];
-}
+
