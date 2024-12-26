@@ -17,7 +17,7 @@ export const routes: Routes = [
     { path: 'userlogin', component: UserloginComponent },
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'usersignup', component: UsersignupComponent },
-    { path: 'singlemovie/:id', component: SinglemovieComponent },
+    { path: 'singlemovie/:id', component: SinglemovieComponent ,resolve: { params: getPrerenderParams }},
 
 ];
 
