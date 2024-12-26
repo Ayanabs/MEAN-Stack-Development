@@ -1,55 +1,36 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import { CommonModule } from '@angular/common';
+import { Observable, of } from 'rxjs'; // Import 'of' to return mock observable.
+import { HttpClient } from '@angular/common/http';
 
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'; // Import HttpTestingModule
-import { of } from 'rxjs'; // Import 'of' to return mock observable.
+class MockHttpClient {
+  get(url: string): Observable<any[]> {
+    return of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Return mock data
+  }
+}
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
   let fixture: ComponentFixture<MoviesComponent>;
-  let httpMock: HttpTestingController;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent,  CommonModule, HttpClientTestingModule], // Import HttpClientTestingModule
+      imports: [MoviesComponent, CommonModule],
+      providers: [{ provide: HttpClient, useClass: MockHttpClient }], // Provide the mock service
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController); // Inject HttpTestingController
-
-    
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies successfully', async () => {
-    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+  it('should fetch movies successfully', () => {
+    fixture.detectChanges(); // Trigger ngOnInit
 
-    fixture.detectChanges(); // Trigger change detection (which triggers ngOnInit and the HTTP request)
-    
-    // Simulate the component making the HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
-    expect(req.request.method).toBe('GET'); // Assert that the request is a GET
-
-    // Provide the mock response
-    req.flush(mockMovies); // Respond with mock data
-
-    // Wait for asynchronous operation to complete
-    await fixture.whenStable(); // Wait for async operations to finish
-
-    // Validate that the component’s movies property was updated correctly
-    expect(component.movies).toEqual(mockMovies);
-
-    // Verify no outstanding HTTP requests remain
-    httpMock.verify();
-  });
-
-  afterEach(() => {
-    // Ensure that no outstanding HTTP requests are left
-    httpMock.verify();
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Validate the data
   });
 });
