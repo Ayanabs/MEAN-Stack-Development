@@ -21,3 +21,12 @@ export const routes: Routes = [
 
 ];
 
+// Function to handle prerendering parameters for the singlemovie/:id route
+export function getPrerenderParams() {
+    // Replace the following IDs with the dynamic IDs you want to prerender
+    return [
+        { id: '1' },
+        { id: '2' },
+        { id: '3' }
+    ];
+}
