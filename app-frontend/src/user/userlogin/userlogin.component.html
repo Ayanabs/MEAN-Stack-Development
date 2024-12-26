@@ -1,0 +1,32 @@
+<p>userlogin works!</p>
+<div class="login-container">
+    <form (ngSubmit)="onSubmit()" #userloginForm="ngForm">
+      <div>
+        <label for="username">Username:</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="clientusername"
+          required
+        />
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="clientpassword"
+          required
+        />
+      </div>
+      <button type="submit" [disabled]="!userloginForm.valid">Submit</button>
+      
+
+      <div *ngIf="errorMessage" class="error-message">
+        <p>{{ errorMessage }}</p>
+      </div>
+    </form>
+  </div>
+  

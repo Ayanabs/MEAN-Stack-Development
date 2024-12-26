@@ -1,13 +1,17 @@
 {
   "dependencies": {
     "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.8.4",
-    "tslib": "^2.8.1"
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
+    
   },
   "scripts": {
     "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadless"
+    
   }
 }

@@ -1,0 +1,16 @@
+<form (ngSubmit)="onSubmit()" #userform="ngForm">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" [(ngModel)]="user.clientusername" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" [(ngModel)]="user.clientpassword" required>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" [(ngModel)]="user.clientemail" required >
+
+    <button type="submit" [disabled]="!userform.valid">Submit</button>
+
+    <div *ngIf="errorMessage" class="error-message">
+        <p>{{ errorMessage }}</p>
+      </div>
+</form>
