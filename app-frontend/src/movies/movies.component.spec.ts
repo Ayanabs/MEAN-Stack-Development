@@ -8,18 +8,17 @@ import { importProvidersFrom } from '@angular/core';
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
   let fixture: ComponentFixture<MoviesComponent>;
-  // let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(async () => {
-    // // Create a mock for HttpClient
-    // mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
-    // mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }])); // Immediate mock setup
+    // Create a mock for HttpClient
+    mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
+    mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }])); // Immediate mock setup
 
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent], // Use only the MoviesComponent
+      imports: [CommonModule, HttpClientModule, MoviesComponent], // Include all necessary modules
       providers: [
-        importProvidersFrom(CommonModule), // Import required providers
-        // { provide: HttpClient, useValue: mockHttpClient }, // Mock HttpClient
+        { provide: HttpClient, useValue: mockHttpClient }, // Mock HttpClient
       ],
     }).compileComponents();
 
@@ -32,10 +31,10 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should fetch movies successfully', () => {
-  //   fixture.detectChanges(); // Trigger ngOnInit
+  it('should fetch movies successfully', () => {
+    fixture.detectChanges(); // Trigger ngOnInit
 
-  //   expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Validate fetched movies
-  //   expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies'); // Validate API call
-  // });
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Validate fetched movies
+    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies'); // Validate API call
+  });
 });
