@@ -3,6 +3,7 @@ import { MoviesComponent } from './movies.component';
 import { CommonModule } from '@angular/common';
 import { of } from 'rxjs'; // Import 'of' to return mock observable.
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -15,8 +16,11 @@ describe('MoviesComponent', () => {
     mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }])); // Immediate mock setup
 
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent,CommonModule,HttpClientModule], 
-      providers: [{ provide: HttpClient, useValue: mockHttpClient }], // Provide the mock HttpClient
+      imports: [MoviesComponent], // Use only the MoviesComponent
+      providers: [
+        importProvidersFrom(CommonModule), // Import required providers
+        { provide: HttpClient, useValue: mockHttpClient }, // Mock HttpClient
+      ],
     }).compileComponents();
 
     // Create the component instance
