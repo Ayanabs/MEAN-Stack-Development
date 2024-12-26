@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
-import { of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -9,19 +9,22 @@ describe('MoviesComponent', () => {
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
 
   beforeEach(async () => {
-    // Mock HttpClient
+    // Create a mock for HttpClient
     mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
     mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]));
 
     // Configure TestBed
-    await TestBed.configureTestingModule({
-      imports: [MoviesComponent], // Import standalone component
-      providers: [
-        { provide: HttpClient, useValue: mockHttpClient }, // Provide mock HttpClient
-      ],
-    }).compileComponents();
+    await TestBed.overrideComponent(MoviesComponent, {
+      set: {
+        providers: [{ provide: HttpClient, useValue: mockHttpClient }], // Override HttpClient with the mock
+      },
+    })
+      .configureTestingModule({
+        imports: [MoviesComponent], // Import the standalone component
+      })
+      .compileComponents();
 
-    // Create component instance
+    // Create the component instance
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
   });
@@ -32,10 +35,11 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies successfully', () => {
     fixture.detectChanges(); // Trigger ngOnInit
-    console.log('Mock HttpClient calls:', mockHttpClient.get.calls.all()); // Debug
 
-    // Validate movies are fetched
-    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
+    // Validate the mock HttpClient is called
     expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
+
+    // Validate the component's movies array
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
   });
 });
