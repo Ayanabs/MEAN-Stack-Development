@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'; // Import HttpTestingModule
 import { of } from 'rxjs'; // Import 'of' to return mock observable.
 
@@ -12,14 +12,14 @@ describe('MoviesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MoviesComponent, HttpClientModule, CommonModule, HttpClientTestingModule], // Import HttpClientTestingModule
+      imports: [MoviesComponent,  CommonModule, HttpClientTestingModule], // Import HttpClientTestingModule
     }).compileComponents();
 
     fixture = TestBed.createComponent(MoviesComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController); // Inject HttpTestingController
 
-    // fixture.detectChanges(); // Trigger change detection (which triggers ngOnInit and the HTTP request)
+    
   });
 
   it('should create', () => {
@@ -28,11 +28,9 @@ describe('MoviesComponent', () => {
 
   it('should fetch movies successfully', async () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
+
+    fixture.detectChanges(); // Trigger change detection (which triggers ngOnInit and the HTTP request)
     
-
-        // Call fetchMovies directly instead of triggering ngOnInit
-        component.fetchMovies();
-
     // Simulate the component making the HTTP request
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET'); // Assert that the request is a GET
