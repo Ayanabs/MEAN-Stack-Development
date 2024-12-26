@@ -12,6 +12,7 @@ describe('MoviesComponent', () => {
   beforeEach(async () => {
     // Create a mock for HttpClient
     mockHttpClient = jasmine.createSpyObj('HttpClient', ['get']);
+    mockHttpClient.get.and.returnValue(of([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }])); // Immediate mock setup
 
     await TestBed.configureTestingModule({
       imports: [MoviesComponent,CommonModule], 
@@ -28,17 +29,9 @@ describe('MoviesComponent', () => {
   });
 
   it('should fetch movies successfully', () => {
-    // Mock data
-    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
-    mockHttpClient.get.and.returnValue(of(mockMovies)); // Mock HTTP response
+    fixture.detectChanges(); // Trigger ngOnInit
 
-    // Trigger ngOnInit
-    fixture.detectChanges();
-
-    // Validate that movies were fetched and set in the component
-    expect(component.movies).toEqual(mockMovies);
-
-    // Validate that the correct API URL was called
-    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
+    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]); // Validate fetched movies
+    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies'); // Validate API call
   });
 });
