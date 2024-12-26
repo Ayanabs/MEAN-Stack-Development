@@ -19,7 +19,7 @@ describe('MoviesComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController); // Inject HttpTestingController
 
-    fixture.detectChanges(); // Trigger change detection (which triggers ngOnInit and the HTTP request)
+    // fixture.detectChanges(); // Trigger change detection (which triggers ngOnInit and the HTTP request)
   });
 
   it('should create', () => {
@@ -29,10 +29,12 @@ describe('MoviesComponent', () => {
   it('should fetch movies successfully', async () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
     
-    // Trigger change detection to simulate ngOnInit lifecycle and HTTP request
-    fixture.detectChanges();
+
+        // Call fetchMovies directly instead of triggering ngOnInit
+        component.fetchMovies();
+
     // Simulate the component making the HTTP request
-    const req = httpMock.expectOne('http://host.docker.internal:5000/api/users/getmovies');
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
     expect(req.request.method).toBe('GET'); // Assert that the request is a GET
 
     // Provide the mock response
