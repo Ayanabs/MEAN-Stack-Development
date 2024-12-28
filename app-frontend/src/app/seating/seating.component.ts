@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'seat-root',
@@ -37,7 +38,8 @@ export class SeatingComponent implements OnInit {
   ];
   bookedSeat: { row: number; seat: number; status: string } | null = null;
 
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     const today = new Date();
@@ -102,28 +104,39 @@ export class SeatingComponent implements OnInit {
   }
 
   loadMovies(): void {
-    this.http.get<any[]>('http://localhost:5000/api/movies').subscribe((movies) => {
-      this.movies = movies;
-
-      if (this.movies.length > 0) {
-        this.selectedMovie = this.movies[0].name;
-        this.selectedMovieImage = this.movies[0].image;
-        this.selectedMovieTimes = this.movies[0].times;
-        this.selectedTime = this.selectedMovieTimes[0];
-        this.loadBookingsForDate();
+    this.http.get<any[]>('http://localhost:5000/api/users/getmovies').subscribe(
+      (movies) => {
+        // Add a default "Select Movie" option at the beginning of the list
+        this.movies = [{ movieName: 'Select Movie', showTimes: [], picture: '' }, ...movies];
+        
+        // Set default selections
+        this.selectedMovie = this.movies[0].movieName; // "Select Movie"
+        this.selectedMovieImage = ''; // Optionally set a placeholder or blank image
+        this.selectedMovieTimes = ['Select Time'];
+        this.selectedTime = 'Select Time';
+        
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching movies:', error);
       }
-    });
+    );
   }
+  
+  
+  
+  
 
   onMovieChange(): void {
-    const selectedMovie = this.movies.find((m) => m.name === this.selectedMovie);
+    const selectedMovie = this.movies.find((movie) => movie.movieName === this.selectedMovie);
     if (selectedMovie) {
-      this.selectedMovieImage = selectedMovie.image;
-      this.selectedMovieTimes = selectedMovie.times;
+      this.selectedMovieImage = selectedMovie.picture;
+      this.selectedMovieTimes = selectedMovie.showTimes;
       this.selectedTime = this.selectedMovieTimes[0];
       this.loadBookingsForDate();
     }
   }
+  
 
   loadBookingsForDate(): void {
     if (!this.selectedDay || !this.selectedMovie || !this.selectedTime) {
@@ -133,7 +146,7 @@ export class SeatingComponent implements OnInit {
     }
   
     const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-    const url = `http://localhost:5000/api/bookings/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
+    const url = `http://localhost:5000/api/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
   
     // Reset seats before making the HTTP request
     this.resetSeats();
@@ -207,7 +220,7 @@ export class SeatingComponent implements OnInit {
       seats,
     };
 
-    this.http.post('http://localhost:5000/api/bookings', bookingData).subscribe(
+    this.http.post('http://localhost:5000/api/savebooking_collection', bookingData).subscribe(
       (response) => {
         console.log('Booking saved successfully:', response);
 
