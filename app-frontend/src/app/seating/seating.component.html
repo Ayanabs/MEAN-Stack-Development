@@ -1,5 +1,4 @@
 <div class="header">
-    <h1>Welcome to CineBooking</h1>
     <p>Select your seats below and enjoy the show!</p>
   </div>
   
@@ -11,7 +10,7 @@
       <div class="movie-selection">
         <label for="movie">Movie:</label>
         <select id="movie" [(ngModel)]="selectedMovie" (change)="onMovieChange()">
-          <option *ngFor="let movie of movies" [value]="movie.name">{{ movie.name }}</option>
+          <option *ngFor="let movie of movies" [value]="movie.movieName">{{ movie.movieName }}</option>
         </select>
       </div>
   
@@ -25,7 +24,11 @@
   
       <!-- Movie Poster -->
       <div class="movie-image">
-        <img [src]="selectedMovieImage" alt="Movie Poster" />
+        <div class="image-container">
+        
+        <img *ngIf="selectedMovieImage" [src]="selectedMovieImage" alt="Movie Image" />
+
+      </div>
       </div>
     </div>
   

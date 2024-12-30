@@ -18,6 +18,9 @@ export const routes: Routes = [
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'singlemovie/:id', component: SinglemovieComponent},
+    { path: 'seating', component: SeatingComponent},
+    {path:'movies',component:MoviesComponent},
+   
 
 ];
 

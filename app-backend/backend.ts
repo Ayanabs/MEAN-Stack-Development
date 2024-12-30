@@ -11,7 +11,9 @@ import AdminSignInRoutes from './admin/admin_user/admin_user_signin';
 import deleteMovieRoutes from './admin/admin_movie/admin_delete_movie.routes';
 import updateMovieRoutes from './admin/admin_movie/admin_update_movie.routes';
 import retrieveMovieById from './admin/admin_movie/admin_retrieve_movieById';
-
+import movie from './seating/movie_routes';
+import getbooking from './seating/get_bookings_routes';
+import upsavebooking from './seating/up_save_bookings_routes';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import path from 'path'
@@ -54,6 +56,14 @@ app.use(
 );
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
+app.use('/api/movies', movie);
+
+app.use('/api/bookings_collection/', getbooking);
+
+app.use('/api/savebooking_collection', upsavebooking);
 
 // Use the signup route
 app.use('/api/users', userSignUpRoutes);

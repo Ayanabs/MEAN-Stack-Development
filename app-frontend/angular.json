@@ -30,7 +30,9 @@
               "src/styles.css"
             ],
             "scripts": [],
-            "server": "src/main.server.ts",
+            "server": 
+            "src/main.server.ts",
+            
             "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
@@ -61,6 +63,9 @@
           "defaultConfiguration": "production"
         },
         "serve": {
+          "options": {
+           "proxyConfig": "proxy.conf.json"
+           },
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
@@ -78,6 +83,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+           
             "polyfills": [
               "zone.js",
               "zone.js/testing"

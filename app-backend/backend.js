@@ -49,6 +49,9 @@ const admin_user_signin_1 = __importDefault(require("./admin/admin_user/admin_us
 const admin_delete_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_delete_movie.routes"));
 const admin_update_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_update_movie.routes"));
 const admin_retrieve_movieById_1 = __importDefault(require("./admin/admin_movie/admin_retrieve_movieById"));
+const movie_routes_1 = __importDefault(require("./seating/movie_routes"));
+const get_bookings_routes_1 = __importDefault(require("./seating/get_bookings_routes"));
+const up_save_bookings_routes_1 = __importDefault(require("./seating/up_save_bookings_routes"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const express_session_1 = __importDefault(require("express-session"));
 const path_1 = __importDefault(require("path"));
@@ -79,6 +82,9 @@ app.use((0, express_session_1.default)({
     },
 }));
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
+app.use('/api/movies', movie_routes_1.default);
+app.use('/api/bookings_collection/', get_bookings_routes_1.default);
+app.use('/api/savebooking_collection', up_save_bookings_routes_1.default);
 // Use the signup route
 app.use('/api/users', user_signup_backend_routes_1.default);
 // Use the login route
