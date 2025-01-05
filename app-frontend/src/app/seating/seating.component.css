@@ -293,3 +293,22 @@ body {
   border-radius: 10px;
   transition: transform 0.3s ease;
 }
+.payment-btn{
+
+  background-color: #dfad08;
+  color: white;
+  
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  display: block;
+  margin-left: auto;
+  margin-right: 4%;
+  margin-top: 4%;
+  
+}
+.payment-btn:hover{
+  background-color: #c28d09;
+}

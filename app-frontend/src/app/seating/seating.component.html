@@ -59,7 +59,7 @@
       </div>
     </div>
   </div>
-  
+  <button class="payment-btn" (click)="redirectToPayment()">Proceed to Payment</button>
   <!-- Seat Selection Section -->
   <div class="seat-container">
     <div *ngFor="let row of rows; let rowIndex = index" class="seat-row">
@@ -78,6 +78,6 @@
         </button>
       </div>
     </div>
-    <button class="payment-btn" (click)="redirectToPayment()">Proceed to Payment</button>
+   
   </div>
-  
+ 
