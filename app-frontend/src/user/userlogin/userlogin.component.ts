@@ -2,6 +2,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient,HttpClientModule  } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SessionService } from '../../services/session.service';
 
 @Component({
   selector: 'app-userlogin',
@@ -18,7 +19,9 @@ export class UserloginComponent {
   @Output() closeModal = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<void>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private sessionService: SessionService,) {}
+
+
 
   // Function to close the modal
   close() {
@@ -61,17 +64,30 @@ export class UserloginComponent {
     };
     console.log('Login data:', loginData);
 
-    this.http.post('http://localhost:5000/api/users/login', loginData)
-      .subscribe({
-        next: (response) =>{
-          console.log('Login successful', response);
-          // Show success alert with the user's username
-          alert(`Login successful! Welcome back ${this.clientusername}.`);
-          this.loginSuccess.emit(); // Emit login success event
-          // Optionally close the modal if login is within a modal
-          this.resetForm();
-          this.close();
-        },
+    this.http.post<{  sessionId: string; userId: string; username: string }>(
+      'http://localhost:5000/api/users/login',
+      loginData
+    )
+    .subscribe({
+      next: (response) => {
+        console.log('Login successful', response);
+
+        // Store session details globally
+        this.sessionService.setSession({
+          sessionId: response.sessionId,
+          userId: response.userId,
+          username: response.username
+        });
+        console.log("Session Data:",this.sessionService.getSession)
+
+        // Show success alert with the user's username
+        alert(`Login successful! Welcome back, ${this.clientusername}.`);
+        this.loginSuccess.emit(); // Emit login success event
+
+        // Optionally close the modal if login is within a modal
+        this.resetForm();
+        this.close();
+      },
         error: (error: any) => {
           console.error('Login failed', error);
           this.errorMessage = 'Login failed. Please check your username and password and try again.';

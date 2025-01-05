@@ -5,7 +5,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UserloginComponent } from '../user/userlogin/userlogin.component';
 import { UsersignupComponent } from '../user/usersignup/usersignup.component';
-
+import { SessionService } from '../services/session.service';
 @Component({
   selector: 'app-navbar',
   imports: [FormsModule,NgIf,NgFor,UserloginComponent,UsersignupComponent],
@@ -21,11 +21,14 @@ export class NavbarComponent {
   private searchMoviesUrl = 'http://localhost:5000/api/users/searchmovies'; 
   dropdownWidth: number = 0;
 
+  private logoutUrl = 'http://localhost:5000/api/users/logout';
+
   @ViewChild('searchBar') searchBar!: ElementRef;
 
   showDropdown: boolean = false; // Track dropdown visibility
 
-  constructor(private http: HttpClient, private router: Router) {}
+
+  constructor(private http: HttpClient, private router: Router,private sessionService: SessionService ) {}
 
   isLoginModalVisible: boolean = false; // Track modal visibility
   isSignupModalVisible: boolean = false;
@@ -61,9 +64,30 @@ export class NavbarComponent {
   }
 
   logout() {
-    // Handle logout logic
-    this.isLoggedIn = false;
-    alert('You have successfully logged out.');
+
+    const session = this.sessionService.getSession(); // Get session data from SessionService
+    const sessionId = session ? session.sessionId : null; // Extract session ID from session data
+    
+    if (sessionId) {
+      // Call the backend logout endpoint with sessionId
+      this.http.post(this.logoutUrl, { sessionId }).subscribe({
+        next: (response) => {
+          console.log('Logout response:', response); 
+          this.isLoggedIn = false; // Update frontend state
+          this.sessionService.clearSession(); // Clear session from localStorage
+          alert('You have successfully logged out.');
+          // Optionally redirect user to the home page
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          console.error('Error logging out:', error);
+          alert('Error logging out.');
+        }
+      });
+    } else {
+      console.error('No session found for logout');
+      alert('Error: No session found.');
+    }
   }
 
   onSearch() {

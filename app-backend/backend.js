@@ -36,6 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isAuthenticated = void 0;
 const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
 const database_1 = __importDefault(require("./database")); // MongoDB connection
@@ -49,7 +50,7 @@ const admin_user_signin_1 = __importDefault(require("./admin/admin_user/admin_us
 const admin_delete_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_delete_movie.routes"));
 const admin_update_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_update_movie.routes"));
 const admin_retrieve_movieById_1 = __importDefault(require("./admin/admin_movie/admin_retrieve_movieById"));
-const connect_mongo_1 = __importDefault(require("connect-mongo"));
+const user_logout_routes_1 = __importDefault(require("./user/userlogoutbackend/user_logout.routes"));
 const express_session_1 = __importDefault(require("express-session"));
 const path_1 = __importDefault(require("path"));
 dotenv.config(); // Load environment variables from .env
@@ -61,6 +62,7 @@ app.use(cors({
     origin: 'http://localhost:4200', // Allow only your frontend's domain
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 }));
 // Middleware
 app.use(express_1.default.json());
@@ -68,21 +70,27 @@ app.use(express_1.default.json());
 (0, database_1.default)();
 // Configure Sessions
 app.use((0, express_session_1.default)({
-    secret: 'ahk', // Replace with a secure random string
+    secret: 'your-secret-key', // Use a strong secret key
     resave: false,
-    saveUninitialized: false,
-    store: connect_mongo_1.default.create({
-        mongoUrl: 'mongodb://localhost:27017/sample', // MongoDB connection string
-    }),
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
+    saveUninitialized: true,
+    cookie: { secure: false }, // Set 'true' if using HTTPS
 }));
+const isAuthenticated = (req, Request, res, Response, next) => {
+    if (req.session && req.session.id) {
+        next();
+    }
+    else {
+        res.status(401).json({ message: 'Unauthorized access' });
+    }
+};
+exports.isAuthenticated = isAuthenticated;
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
 // Use the signup route
 app.use('/api/users', user_signup_backend_routes_1.default);
 // Use the login route
 app.use('/api/users', userloginbackend_routes_1.default);
+// Use the logout route
+app.use('/api/users', user_logout_routes_1.default);
 // Use the insert movie route
 app.use('/api/users', admin_insert_movie_routes_1.default);
 // Use the retrieve movie route

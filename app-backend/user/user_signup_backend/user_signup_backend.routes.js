@@ -33,10 +33,6 @@ router.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, function*
         const newUser = new userModel_1.default({ username, email, password });
         const savedUser = yield newUser.save();
         yield newUser.save();
-        // Create a session for the user
-        req.session.user = { id: savedUser._id.toString(), username: savedUser.username };
-        // Log session details for debugging
-        console.log(`User signed up. Session ID: ${req.session.id}, User ID: ${newUser._id} Username:${newUser.username}`);
         res.status(201).json({ message: 'User signed up successfully',
             user: { username, email },
             sessionId: req.session.id
