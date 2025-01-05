@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
+import { PaypalButtonComponent } from "../paypal-button/paypal-button.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'seat-root',
@@ -12,6 +14,12 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./seating.component.css']
 })
 export class SeatingComponent implements OnInit {
+handlePaymentSuccess($event: Event) {
+throw new Error('Method not implemented.');
+}
+handlePaymentError($event: Event) {
+throw new Error('Method not implemented.');
+}
   // Movie and Showtime Management
   movies: any[] = [];
   selectedMovie: string = '';
@@ -37,15 +45,19 @@ export class SeatingComponent implements OnInit {
     Array(7).fill(null).map(() => ({ selected: false, booked: false })),
   ];
   bookedSeat: { row: number; seat: number; status: string } | null = null;
+showPaymentButton: any;
+totalAmount: any;
+selectedSeatsForPayment: any;
 
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit(): void {
     const today = new Date();
     this.selectedDay = { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
     this.generateCalendar();
     this.loadMovies();
+    
   }
 
   generateCalendar(): void {
@@ -249,4 +261,14 @@ export class SeatingComponent implements OnInit {
       this.saveBookings();
     }
   }
+
+
+
+   // Method to redirect to the PaymentComponent
+   redirectToPayment(): void {
+    this.router.navigate(['/payment']); // Assuming '/payment' is the route for PaymentComponent
+  }
+  
+
+
 }

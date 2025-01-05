@@ -10,6 +10,9 @@ import { AdminMovieComponent } from '../admin/admin-movie/admin-movie.component'
 import { AdminDashboardComponent } from '../admin/admin-dashboard/admin-dashboard.component';
 import { AdminDashboardMovieComponent } from '../admin/admin-dashboard-movie/admin-dashboard-movie.component';
 
+import { PaypalButtonComponent } from './paypal-button/paypal-button.component';
+import { PaymentComponent } from './payment/payment.component';
+
 
 
 export const routes: Routes = [
@@ -20,7 +23,8 @@ export const routes: Routes = [
     { path: 'singlemovie/:id', component: SinglemovieComponent},
     { path: 'seating', component: SeatingComponent},
     {path:'movies',component:MoviesComponent},
-   
+    { path: 'paypalbtn', component: PaypalButtonComponent },
+    {path:'payment',component:PaymentComponent},
 
 ];
 
