@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const movie_model_1 = require("../admin/admin_movie/movie_model"); // Import your movie collection model
+const movie_model_1 = require("./movie_model"); // Import your movie collection model
 const router = express_1.default.Router();
 const path = require('path');
 // Search movies by name

@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import {Movie} from '../admin_movie/movie_model'; // Import your movie collection model
+import {Movie} from '../../movies/movie_model'; // Import your movie collection model
 
 const router = express.Router();
 const path = require('path');

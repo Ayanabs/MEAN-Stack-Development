@@ -4,19 +4,19 @@ import connectDB from './database'; // MongoDB connection
 import userSignUpRoutes from './user/user_signup_backend/user_signup_backend.routes'; // Routes for user signup
 import userLoginRoutes from './user/userloginbackend/userloginbackend.routes';
 import insertMovieRoutes from './admin/admin_movie/admin_insert_movie.routes';
-import retrieveMovieRoutes from './admin/admin_movie/admin_retrieve_movie.routes';
+import retrieveMovieRoutes from './movies/retrieve_movie.routes';
 import retrieveMovieByNameRoutes from './movies/retrieve_movie_byName';
 import adminSignUpRoutes from './admin/admin_user/admin_user_signup';
 import AdminSignInRoutes from './admin/admin_user/admin_user_signin';
 import deleteMovieRoutes from './admin/admin_movie/admin_delete_movie.routes';
 import updateMovieRoutes from './admin/admin_movie/admin_update_movie.routes';
 import retrieveMovieById from './admin/admin_movie/admin_retrieve_movieById';
-import movie from './seating/movie_routes';
-import getbooking from './seating/get_bookings_routes';
-import upsavebooking from './seating/up_save_bookings_routes';
+import userlogout from './user/userlogoutbackend/user_logout.routes';
+
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
-import path from 'path'
+import path from 'path';
+import { Request, Response, NextFunction } from 'express';
 
 dotenv.config(); // Load environment variables from .env
 
@@ -31,6 +31,7 @@ app.use(
     origin: 'http://localhost:4200', // Allow only your frontend's domain
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
 
@@ -41,35 +42,34 @@ app.use(express.json());
 connectDB();
 
 // Configure Sessions
-app.use(
-  session({
-    secret: 'ahk', // Replace with a secure random string
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: 'mongodb://localhost:27017/sample', // MongoDB connection string
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
-  })
-);
+app.use(session({
+  secret: 'your-secret-key',  // Use a strong secret key
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false },  // Set 'true' if using HTTPS
+}));
+
+
+
+export const isAuthenticated = (req: Request, Request: { new(input: RequestInfo | URL, init?: RequestInit): globalThis.Request; prototype: globalThis.Request; }, res: Response, Response: { new(body?: BodyInit | null, init?: ResponseInit): globalThis.Response; prototype: globalThis.Response; error(): globalThis.Response; json(data: any, init?: ResponseInit): globalThis.Response; redirect(url: string | URL, status?: number): globalThis.Response; }, next: NextFunction) => {
+  if (req.session && req.session.id) {
+    next();
+  } else {
+    res.status(401).json({ message: 'Unauthorized access' });
+  }
+};
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-
-app.use('/api/movies', movie);
-
-app.use('/api/bookings_collection/', getbooking);
-
-app.use('/api/savebooking_collection', upsavebooking);
 
 // Use the signup route
 app.use('/api/users', userSignUpRoutes);
 
 // Use the login route
 app.use('/api/users', userLoginRoutes);
+
+// Use the logout route
+app.use('/api/users', userlogout);
 
 // Use the insert movie route
 app.use('/api/users', insertMovieRoutes);

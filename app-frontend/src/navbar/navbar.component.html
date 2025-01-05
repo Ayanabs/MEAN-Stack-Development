@@ -16,7 +16,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link text-white" href="/">Home</a>
+            <a class="nav-link text-white" href="#">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="/movies">Movies</a>
@@ -26,8 +26,19 @@
           </li>
         </ul>
         <div class="d-flex">
-          <a href="/userlogin" class="btn btn-outline-light me-2">Log In</a>
-          <a href="/usersignup" class="btn btn-danger">Sign Up</a>
+          <button  *ngIf="!isLoggedIn" (click)="toggleLoginModal()" class="btn btn-outline-light me-2">
+            Log In
+          </button>
+          <button
+          *ngIf="isLoggedIn"
+          (click)="logout()"
+          class="btn btn-outline-light me-2"
+        >
+          Log Out
+        </button>
+          <button (click)="openSignupModal()" class="btn btn-danger me-2">
+            Signup
+          </button>
         </div>
       </div>
     </div>
@@ -35,13 +46,14 @@
 
   <!-- Search Bar -->
   <div class="search-bar-section py-3">
-    <div class="container d-flex flex-column flex-md-row justify-content-center align-items-center position-relative">
+    <div class="container  d-flex flex-column flex-md-row justify-content-center align-items-center position-relative">
       <input
         type="text"
         class="form-control"
         placeholder="Search for a movie"
         [(ngModel)]="searchQuery"
         (input)="onSearch()"
+        (focus)="onFocus()"
         style="max-width: 100%;"
       />
       <button class="btn btn-outline-light ms-0 ms-md-2 mt-2 mt-md-0" (click)="onSearch()">Search</button>
@@ -50,12 +62,12 @@
       <ul
         *ngIf="filteredMovies.length > 0"
         class="dropdown-menu show mt-2"
-        style="max-width: 100%; width: 100%; z-index: 1050;"
+       
       >
         <li
           *ngFor="let movie of filteredMovies"
           class="dropdown-item d-flex align-items-center"
-          (click)="onMovieClick(movie)"
+          (click)="onMovieClick(movie._id)"
         >
           <img
             [src]="movie.picture"
@@ -72,3 +84,16 @@
     </div>
   </div>
 </div>
+
+<!-- User Login Modal -->
+<app-userlogin
+    [isVisible]="isLoginModalVisible"
+    (loginSuccess)="onLoginSuccess()"
+    (closeModal)="closeLoginModal()"
+  ></app-userlogin>
+
+  <!-- User Signup Modal -->
+<app-usersignup
+  [isVisible]="isSignupModalVisible"
+  (closeModal)="closeSignupModal()"
+></app-usersignup>

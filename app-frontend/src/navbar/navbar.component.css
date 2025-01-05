@@ -38,6 +38,7 @@
   border-radius: 0.25rem;
   background-color: #212529;
   color: #fff;
+
 }
 
 .search-bar-section .form-control::placeholder {
@@ -61,11 +62,13 @@
   background-color: #212529;
   border: none;
   border-radius: 0.25rem;
-  max-width: 100%;
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-height: 300px;
   overflow-y: auto;
+  scrollbar-width: thin; 
+  scrollbar-color: #343a40 transparent; 
+  
 }
 
 .dropdown-item {
@@ -88,6 +91,35 @@
   background-color: #495057;
   cursor: pointer;
 }
+
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+
+
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+ 
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background-color: #343a40;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background-color: #495057;
+}
+
+/* Smooth Scroll */
+.dropdown-menu {
+  scroll-behavior: smooth;
+}
+
+
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {

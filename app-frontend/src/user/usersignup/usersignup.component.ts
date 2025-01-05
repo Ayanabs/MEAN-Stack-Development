@@ -1,4 +1,4 @@
-import { Component, NgModule } from '@angular/core';
+import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router'; 
@@ -14,6 +14,10 @@ import { CommonModule, NgIf } from '@angular/common';
   styleUrls: ['./usersignup.component.css']
 })
 export class UsersignupComponent {
+  @Input() isVisible: boolean = false; // Controls visibility of the modal
+  @Output() closeModal = new EventEmitter<void>(); // Event to notify parent
+
+
   user = {
     clientusername: '',
     clientpassword: '',
@@ -78,8 +82,9 @@ export class UsersignupComponent {
     this.http.post('http://localhost:5000/api/users/signup', signupData).subscribe(
       (response: any) => {
         console.log('User signed up successfully:', response);
-        
-        //this.router.navigate(['/login']);
+        alert("Signup successful! Welcome ${this.user.clientusername} to the CineBooking.")
+       
+        this.router.navigate(['/userlogin']);
       },
       (error: any) => {
         console.error('Error signing up user:', error);
@@ -87,4 +92,17 @@ export class UsersignupComponent {
       }
     );
     }
+    
+    resetSignUpForm(){
+      this.user.clientusername='';
+      this.user.clientpassword='';
+      this.user.clientemail='';
+    }
+
+
+    close() {
+      this.closeModal.emit(); // Notify parent to hide the modal
+      this.resetSignUpForm();
+    }
+  
 }

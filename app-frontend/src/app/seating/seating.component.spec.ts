@@ -22,7 +22,13 @@ describe('SeatingComponent', () => {
     
   });
 
-  
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(SeatingComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const titleText = compiled.querySelector('h1')?.textContent;
+    expect(titleText).toContain('Welcome to CineBooking');
+  });
 });
 function expect(value: any) {
   return {
