@@ -1,12 +1,14 @@
 import { NgFor, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, NgModule } from '@angular/core';
+import { Component, ElementRef, HostListener, NgModule, ViewChild } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { UserloginComponent } from '../user/userlogin/userlogin.component';
+import { UsersignupComponent } from '../user/usersignup/usersignup.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [FormsModule,NgIf,NgFor],
+  imports: [FormsModule,NgIf,NgFor,UserloginComponent,UsersignupComponent],
   standalone:true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
@@ -17,8 +19,52 @@ export class NavbarComponent {
   filteredMovies: any[] = []; 
   errorMessage: string = '';
   private searchMoviesUrl = 'http://localhost:5000/api/users/searchmovies'; 
+  dropdownWidth: number = 0;
+
+  @ViewChild('searchBar') searchBar!: ElementRef;
+
+  showDropdown: boolean = false; // Track dropdown visibility
 
   constructor(private http: HttpClient, private router: Router) {}
+
+  isLoginModalVisible: boolean = false; // Track modal visibility
+  isSignupModalVisible: boolean = false;
+
+  isLoggedIn: boolean = false; // Track user login state
+
+  
+  toggleLoginModal() {
+    if (this.isLoggedIn) {
+      // If logged in, clicking login button logs the user out
+      this.logout();
+    } else {
+      // Otherwise, show login modal
+      this.isLoginModalVisible = true;
+    }
+  }
+
+  closeLoginModal() {
+    this.isLoginModalVisible = false;
+  }
+  openSignupModal() {
+    this.isSignupModalVisible = true;
+  }
+
+  closeSignupModal() {
+    this.isSignupModalVisible = false;
+  }
+
+  onLoginSuccess() {
+    // Handle post-login logic
+    this.isLoggedIn = true;
+    this.closeLoginModal();
+  }
+
+  logout() {
+    // Handle logout logic
+    this.isLoggedIn = false;
+    alert('You have successfully logged out.');
+  }
 
   onSearch() {
     if (this.searchQuery.trim()) {
@@ -36,7 +82,10 @@ export class NavbarComponent {
                   (movie) =>
                     !movie.movieName.toLowerCase().startsWith(this.searchQuery.toLowerCase())
                 )
+
               );
+              this.showDropdown = true; // Show dropdown when search is successful
+
             console.log('Filtered Movies:', this.filteredMovies); // Log filtered results
           },
           error: (error) => {
@@ -45,10 +94,29 @@ export class NavbarComponent {
         });
     } else {
       this.filteredMovies = []; // Clear dropdown if search query is empty
+      this.showDropdown = false; // Hide dropdown if search query is empty
     }
   }
-  onMovieClick(movie: any) {
-    console.log('Selected movie:', movie);
-    // Navigate to a details page or perform another action
+  onMovieClick(movieid: string) {
+    console.log('Selected movie:', movieid);
+    // Navigate to the single movie page with the movie ID
+    this.router.navigate(['/singlemovie', movieid]);
   }
+
+  @HostListener('document:click', ['$event'])
+  onInputFocusOut(event: FocusEvent) {
+    const target = event.relatedTarget as HTMLElement;
+    const isInsideDropdown = !!target?.closest('.dropdown-menu');
+
+    if (!isInsideDropdown) {
+        this.showDropdown = false;
+    }
+}
+  onFocus() {
+    if (this.searchQuery.trim() && this.filteredMovies.length > 0) {
+      this.showDropdown = true; // Show dropdown on focus if search query exists
+    }
+  }
+
+  
 }

@@ -34,7 +34,7 @@ export class AdminMovieComponent {
     director: '',
     nowScreening: '', // "Yes" or "No"
     additionalInfo: '',
-
+    timeSlots: [] as string[],
   };
 
 
@@ -44,6 +44,19 @@ export class AdminMovieComponent {
     if (file) {
       this.movie.picture = file;
     }
+  }
+
+
+  addTimeSlot() {
+    this.movie.timeSlots.push(''); // Add an empty time slot
+  }
+
+  removeTimeSlot(index: number) {
+    this.movie.timeSlots.splice(index, 1); // Remove time slot at the specified index
+  }
+
+  updateTimeSlot(index: number, value: string) {
+    this.movie.timeSlots[index] = value; // Update the specific time slot
   }
 
   onSubmit() {
@@ -58,6 +71,9 @@ export class AdminMovieComponent {
       insertMovieData.append('watchTime', this.movie.watchTime?.toString() ?? '');
       insertMovieData.append('director', this.movie.director || '');
       insertMovieData.append('nowScreening',  this.movie.nowScreening === 'Yes' ? 'true' : 'false' );
+      this.movie.timeSlots.forEach((slot, index) =>
+        insertMovieData.append(`timeSlots[${index}]`, slot)
+      );
 
       // console.log('movieName', this.movie.movieName)
       // console.log('category', this.movie.category)
@@ -95,6 +111,7 @@ export class AdminMovieComponent {
 
   resetForm() {
     this.movieInsertForm.resetForm(); // Reset form fields
+    this.movie.timeSlots = [];
     const fileInput = document.getElementById('picture') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = ''; // Clear file input

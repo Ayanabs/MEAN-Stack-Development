@@ -102,7 +102,7 @@ export class SeatingComponent implements OnInit {
   }
 
   loadMovies(): void {
-    this.http.get<any[]>('http://localhost:5000/api/movies').subscribe((movies) => {
+    this.http.get<any[]>('http://localhost:5000/api/users/getmovies').subscribe((movies) => {
       this.movies = movies;
 
       if (this.movies.length > 0) {

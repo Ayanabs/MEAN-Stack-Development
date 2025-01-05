@@ -4,7 +4,7 @@ import connectDB from './database'; // MongoDB connection
 import userSignUpRoutes from './user/user_signup_backend/user_signup_backend.routes'; // Routes for user signup
 import userLoginRoutes from './user/userloginbackend/userloginbackend.routes';
 import insertMovieRoutes from './admin/admin_movie/admin_insert_movie.routes';
-import retrieveMovieRoutes from './admin/admin_movie/admin_retrieve_movie.routes';
+import retrieveMovieRoutes from './movies/retrieve_movie.routes';
 import retrieveMovieByNameRoutes from './movies/retrieve_movie_byName';
 import adminSignUpRoutes from './admin/admin_user/admin_user_signup';
 import AdminSignInRoutes from './admin/admin_user/admin_user_signin';

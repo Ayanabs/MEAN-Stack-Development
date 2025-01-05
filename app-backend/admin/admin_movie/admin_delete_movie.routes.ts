@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Movie } from './movie_model';
+import { Movie } from '../../movies/movie_model';
 import fs from 'fs';
 import path from 'path';
 

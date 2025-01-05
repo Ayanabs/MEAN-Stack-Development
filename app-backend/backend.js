@@ -42,7 +42,7 @@ const database_1 = __importDefault(require("./database")); // MongoDB connection
 const user_signup_backend_routes_1 = __importDefault(require("./user/user_signup_backend/user_signup_backend.routes")); // Routes for user signup
 const userloginbackend_routes_1 = __importDefault(require("./user/userloginbackend/userloginbackend.routes"));
 const admin_insert_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_insert_movie.routes"));
-const admin_retrieve_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_retrieve_movie.routes"));
+const retrieve_movie_routes_1 = __importDefault(require("./movies/retrieve_movie.routes"));
 const retrieve_movie_byName_1 = __importDefault(require("./movies/retrieve_movie_byName"));
 const admin_user_signup_1 = __importDefault(require("./admin/admin_user/admin_user_signup"));
 const admin_user_signin_1 = __importDefault(require("./admin/admin_user/admin_user_signin"));
@@ -86,7 +86,7 @@ app.use('/api/users', userloginbackend_routes_1.default);
 // Use the insert movie route
 app.use('/api/users', admin_insert_movie_routes_1.default);
 // Use the retrieve movie route
-app.use('/api/users', admin_retrieve_movie_routes_1.default);
+app.use('/api/users', retrieve_movie_routes_1.default);
 // Use the retrieve movie by name route
 app.use('/api/users', retrieve_movie_byName_1.default);
 // Use the admin signup route

@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const movie_model_1 = require("./movie_model"); // Movie model
+const movie_model_1 = require("../../movies/movie_model"); // Movie model
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const router = express_1.default.Router();
@@ -42,8 +42,13 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 // Route to update a movie by ID
 router.put('/updatemovie/:id', upload.single('picture'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening } = req.body;
+    const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening, timeSlots } = req.body;
     let updateData = { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening };
+    // Handle timeSlots
+    if (timeSlots) {
+        // Ensure timeSlots is an array
+        updateData.timeSlots = Array.isArray(timeSlots) ? timeSlots : JSON.parse(timeSlots);
+    }
     try {
         // Find the existing movie
         const existingMovie = yield movie_model_1.Movie.findById(id);
