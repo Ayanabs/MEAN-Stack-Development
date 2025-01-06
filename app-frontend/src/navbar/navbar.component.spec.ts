@@ -21,14 +21,14 @@ describe('NavbarComponent', () => {
   });
 
   it('should fetch movies',async () => {
-    const mockMovies = [{ movieName: 'Movie' }, { movieName: 'Movie 2' }];
+    const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
   
     // Trigger the HTTP request by calling the relevant function
     component.searchQuery = 'Movie';
     component.onSearch();
   
     // Mock HTTP request
-    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?movieName=Movie');
+    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?name=Movie');
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies);
   
