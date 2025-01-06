@@ -3,17 +3,13 @@ import Booking from './models';
 
 const router: Router = express.Router();
 
-// Define the type for the Booking request body
-interface BookingRequest {
-  date: string;
-  movieName: string;
-  showTime: string;
-  seats: [];
-}
+
+
 
 // Get bookings for a specific date, movie, and time
-router.get('/:date/:movie/:time', async (req: Request, res: Response) => {
+router.get('/bookings_collection/:date/:movie/:time', async (req: Request, res: Response) => {
   const { date, movie, time } = req.params;
+  console.log("get booking file accessed:",req.params);
   try {
     const booking = await Booking.findOne({ date, movieName: movie, showTime: time });
     if (booking) {
@@ -28,9 +24,5 @@ router.get('/:date/:movie/:time', async (req: Request, res: Response) => {
 
 
 
-// 404 handler for undefined routes
-router.use((req: Request, res: Response) => {
-  res.status(404).json({ message: 'API route not found' });
-});
 
 export default router;

@@ -73,12 +73,20 @@ export class UserloginComponent {
         console.log('Login successful', response);
 
         // Store session details globally
-        this.sessionService.setSession({
-          sessionId: response.sessionId,
-          userId: response.userId,
-          username: response.username
-        });
-        console.log("Session Data:",this.sessionService.getSession)
+        if (response.sessionId && response.userId && response.username) {
+          const sessionData = {
+            sessionId: response.sessionId,
+            userId: response.userId,
+            username: response.username,
+            selectedMovie: '',  // Default value
+            selectedTime: '',   // Default value
+            selectedSeats: []   // Default value
+          };
+          this.sessionService.setSession(sessionData);
+        } else {
+          console.error('Invalid login response. Missing session data.');
+        }
+        console.log("Session Data:",this.sessionService.getSession())
 
         // Show success alert with the user's username
         alert(`Login successful! Welcome back, ${this.clientusername}.`);

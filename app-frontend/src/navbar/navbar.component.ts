@@ -34,7 +34,13 @@ export class NavbarComponent {
   isSignupModalVisible: boolean = false;
 
   isLoggedIn: boolean = false; // Track user login state
-
+  ngOnInit(): void {
+    // Check session on component initialization
+    const session = this.sessionService.getSession();
+    if (session) {
+      this.isLoggedIn = true;
+    }
+  }
   
   toggleLoginModal() {
     if (this.isLoggedIn) {
@@ -77,7 +83,7 @@ export class NavbarComponent {
           this.sessionService.clearSession(); // Clear session from localStorage
           alert('You have successfully logged out.');
           // Optionally redirect user to the home page
-          this.router.navigate(['/']);
+          // this.router.navigate(['/']);
         },
         error: (error) => {
           console.error('Error logging out:', error);

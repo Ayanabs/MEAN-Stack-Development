@@ -40,7 +40,8 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
         message: 'Login successful',
         
         sessionId: req.sessionID, 
-        userDetails: { userId: user._id, username: user.username } 
+         userId: user._id, 
+         username: user.username 
       });
       console.log("session id in loginbackend:",req.sessionID)
 

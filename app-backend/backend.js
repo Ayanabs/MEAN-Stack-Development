@@ -51,12 +51,14 @@ const admin_delete_movie_routes_1 = __importDefault(require("./admin/admin_movie
 const admin_update_movie_routes_1 = __importDefault(require("./admin/admin_movie/admin_update_movie.routes"));
 const admin_retrieve_movieById_1 = __importDefault(require("./admin/admin_movie/admin_retrieve_movieById"));
 const user_logout_routes_1 = __importDefault(require("./user/userlogoutbackend/user_logout.routes"));
+const up_save_bookings_routes_1 = __importDefault(require("./seating/up_save_bookings_routes"));
+const get_bookings_routes_1 = __importDefault(require("./seating/get_bookings_routes"));
 const express_session_1 = __importDefault(require("express-session"));
 const path_1 = __importDefault(require("path"));
 dotenv.config(); // Load environment variables from .env
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-const cors = require('cors');
+const cors = require("cors");
 // Allow requests from localhost:4200 (frontend)
 app.use(cors({
     origin: 'http://localhost:4200', // Allow only your frontend's domain
@@ -85,6 +87,13 @@ const isAuthenticated = (req, Request, res, Response, next) => {
 };
 exports.isAuthenticated = isAuthenticated;
 app.use('/uploads', express_1.default.static(path_1.default.join(__dirname, 'uploads')));
+// Log every request to /api/users routes
+app.use('/api/users', (req, res, next) => {
+    console.log(`Accessed route: ${req.originalUrl}`);
+    next(); // Pass control to the next handler
+});
+// Use the get seating route
+app.use('/api/users', get_bookings_routes_1.default);
 // Use the signup route
 app.use('/api/users', user_signup_backend_routes_1.default);
 // Use the login route
@@ -107,6 +116,8 @@ app.use('/api/users', admin_delete_movie_routes_1.default);
 app.use('/api/users', admin_update_movie_routes_1.default);
 // Use the retrieve movieById route
 app.use('/api/users', admin_retrieve_movieById_1.default);
+// Use the insert booking route
+app.use('/api/users', up_save_bookings_routes_1.default);
 // Default route
 app.get('/', (req, res) => {
     res.send('Backend server for signup functionality');

@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 // Route to retrieve all movies from the database
 router.get('/getmovies', async (req: Request, res: Response): Promise<void> => {
 
-    console.log('Fetching movies...');
+    // console.log('Fetching movies...');
   try {
     // Retrieve movies from the database
     const movies = await Movie.find();
@@ -24,7 +24,7 @@ router.get('/getmovies', async (req: Request, res: Response): Promise<void> => {
       picture: `http://localhost:5000/uploads/${path.basename(movie.picture)}`, // Full URL for the picture
     }));
 
-    console.log('Movies retrieved:', retrievedMovies);
+    // console.log('Movies retrieved:', retrievedMovies);
 
     // Send the retrieved movies as JSON response
     res.status(200).json(retrievedMovies);

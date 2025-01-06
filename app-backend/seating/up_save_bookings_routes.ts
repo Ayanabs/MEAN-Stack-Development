@@ -5,6 +5,8 @@ const router: Router = express.Router();
 
 // Define the type for the Booking request body
 interface BookingRequest {
+  userid:string,
+  username:string,
   date: string;
   movieName: string;
   showTime: string;
@@ -12,14 +14,15 @@ interface BookingRequest {
 }
 
 // Save or update bookings
-router.post('/', async (req: Request, res: Response) => {
-  const { date, movieName, showTime, seats }: BookingRequest = req.body;
+router.post('/bookings_collection', async (req: Request, res: Response) => {
+  const {  userid, username,date, movieName, showTime, seats }: BookingRequest = req.body;
+  console.log("Backend Booking data",req.body)
   try {
-    let booking = await Booking.findOne({ date, movieName, showTime });
+    let booking = await Booking.findOne({ userid, username,date, movieName, showTime });
     if (booking) {
       booking.seats = seats;
     } else {
-      booking = new Booking({ date, movieName, showTime, seats });
+      booking = new Booking({ userid, username,date, movieName, showTime, seats });
     }
     await booking.save();
     res.status(200).json({ message: 'Booking saved successfully!' });

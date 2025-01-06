@@ -13,29 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const models_1 = __importDefault(require("./models"));
+const models_1 = __importDefault(require("../seating/models"));
 const router = express_1.default.Router();
-// Save or update bookings
-router.post('/bookings_collection', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userid, username, date, movieName, showTime, seats } = req.body;
-    console.log("Backend Booking data", req.body);
+router.post('/retrievebooking', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { date, name, time } = req.body;
+    console.log("Get booking info before try block:", date, name, time);
     try {
-        let booking = yield models_1.default.findOne({ userid, username, date, movieName, showTime });
-        if (booking) {
-            booking.seats = seats;
+        const moviename = decodeURIComponent(name);
+        const showtime = decodeURIComponent(time);
+        console.log("Get booking info:", date, moviename, showtime);
+        const bookings = yield models_1.default.find({
+            date: date,
+            movieName: moviename,
+            showTime: showtime,
+        });
+        if (!bookings || bookings.length === 0) {
+            console.log('No bookings found for the specified criteria.');
+            res.status(200).json([]);
+            return;
         }
-        else {
-            booking = new models_1.default({ userid, username, date, movieName, showTime, seats });
-        }
-        yield booking.save();
-        res.status(200).json({ message: 'Booking saved successfully!' });
+        const bookedSeats = bookings.flatMap((booking) => booking.seats);
+        res.status(200).json(bookedSeats);
     }
     catch (error) {
-        res.status(500).json({ message: 'Error saving booking', error: error.message });
+        console.error('Error retrieving bookings:', error);
+        res.status(500).json({ message: 'Internal Server Error', error: error });
     }
 }));
-// 404 handler for undefined routes
-router.use((req, res) => {
-    res.status(404).json({ message: 'API route not found' });
-});
 exports.default = router;

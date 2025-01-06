@@ -12,18 +12,21 @@ import deleteMovieRoutes from './admin/admin_movie/admin_delete_movie.routes';
 import updateMovieRoutes from './admin/admin_movie/admin_update_movie.routes';
 import retrieveMovieById from './admin/admin_movie/admin_retrieve_movieById';
 import userlogout from './user/userlogoutbackend/user_logout.routes';
+import insertBooking from './seating/up_save_bookings_routes';
+import retrieveBooking from './seating/get_bookings_routes';
 
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 
+
 dotenv.config(); // Load environment variables from .env
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-const cors = require('cors');
+const cors = require("cors")
 
 // Allow requests from localhost:4200 (frontend)
 app.use(
@@ -62,6 +65,15 @@ export const isAuthenticated = (req: Request, Request: { new(input: RequestInfo 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+
+// Log every request to /api/users routes
+app.use('/api/users', (req: Request, res: Response, next: NextFunction) => {
+  console.log(`Accessed route: ${req.originalUrl}`);
+  next();  // Pass control to the next handler
+});
+
+// Use the get seating route
+app.use('/api/users',retrieveBooking );
 // Use the signup route
 app.use('/api/users', userSignUpRoutes);
 
@@ -94,6 +106,11 @@ app.use('/api/users', updateMovieRoutes);
 
 // Use the retrieve movieById route
 app.use('/api/users', retrieveMovieById);
+
+// Use the insert booking route
+app.use('/api/users',insertBooking  );
+
+
 
 // Default route
 app.get('/', (req, res) => {

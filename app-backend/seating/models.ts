@@ -8,6 +8,8 @@ interface Seat {
 
 // Define the interface for a booking document
 export interface BookingDocument extends Document {
+  userid:string,
+  username:string,
   date: string;
   movieName: string;
   showTime: string;
@@ -16,6 +18,8 @@ export interface BookingDocument extends Document {
 
 // Booking schema
 const bookingSchema: Schema<BookingDocument> = new mongoose.Schema({
+  userid:{type: String,required:true},
+  username:{type: String,required:true},
   date: { type: String, required: true },
   movieName: { type: String, required: true },
   showTime: { type: String, required: true },
@@ -28,6 +32,6 @@ const bookingSchema: Schema<BookingDocument> = new mongoose.Schema({
 });
 
 // Booking model
-const Booking: Model<BookingDocument> = mongoose.model<BookingDocument>('Booking', bookingSchema);
+const Booking: Model<BookingDocument> = mongoose.model<BookingDocument>('Booking', bookingSchema,'bookings_collection');
 
 export default Booking;

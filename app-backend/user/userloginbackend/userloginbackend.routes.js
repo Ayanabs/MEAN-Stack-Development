@@ -41,7 +41,8 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).json({
             message: 'Login successful',
             sessionId: req.sessionID,
-            userDetails: { userId: user._id, username: user.username }
+            userId: user._id,
+            username: user.username
         });
         console.log("session id in loginbackend:", req.sessionID);
     }

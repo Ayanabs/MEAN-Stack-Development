@@ -23,13 +23,13 @@ app.use((req, res, next) => {
 });
 // Route to retrieve all movies from the database
 router.get('/getmovies', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('Fetching movies...');
+    // console.log('Fetching movies...');
     try {
         // Retrieve movies from the database
         const movies = yield movie_model_1.Movie.find();
         // Map through the movies to include the full URL for the picture
         const retrievedMovies = movies.map(movie => (Object.assign(Object.assign({}, movie.toObject()), { picture: `http://localhost:5000/uploads/${path.basename(movie.picture)}` })));
-        console.log('Movies retrieved:', retrievedMovies);
+        // console.log('Movies retrieved:', retrievedMovies);
         // Send the retrieved movies as JSON response
         res.status(200).json(retrievedMovies);
     }

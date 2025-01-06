@@ -19,7 +19,7 @@ export const routes: Routes = [
     { path: 'usersignup', component: UsersignupComponent },
     { path: 'movies', component: MoviesComponent},
     { path: 'singlemovie/:id', component: SinglemovieComponent},
-    { path: 'seating', component: SeatingComponent,canActivate: [AuthGuard] }
+    { path: 'seating', component: SeatingComponent}
 
 ];
 

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class BookingService {
-  private apiUrl = 'http://localhost:5000/api/bookings';
+  private apiUrl = 'http://localhost:5000/api/users/bookings_collection';
 
   constructor(private http: HttpClient) {}
 
@@ -14,8 +14,6 @@ export class BookingService {
     return this.http.get<any[]>(`${this.apiUrl}/${date}`);
   }
 
-  saveBookings(date: string, seats: any[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, { date, seats });
-  }
+ 
 }
 
