@@ -71,7 +71,7 @@
       <button class="book-btn" *ngIf="seat.selected" (click)="confirmAllBookings()">
         Book
       </button>
-      <button class="remove-btn" *ngIf="seat.booked" (click)="removeBooking(rowIndex, seatIndex)">
+      <button class="remove-btn" *ngIf="seat.booked && seat.ownedByUser " (click)="removeBooking(rowIndex, seatIndex)">
         Remove
       </button>
     </div>

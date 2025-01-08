@@ -22,9 +22,13 @@ router.post('/bookings_collection', (req, res) => __awaiter(void 0, void 0, void
     try {
         let booking = yield models_1.default.findOne({ userid, username, date, movieName, showTime });
         if (booking) {
-            booking.seats = seats;
+            // Merge new seats with existing ones, ensuring no duplicates
+            const existingSeats = new Set(booking.seats.map(seat => JSON.stringify(seat))); // Serialize seats to compare objects
+            const newSeats = seats.filter(seat => !existingSeats.has(JSON.stringify(seat))); // Filter out duplicates
+            booking.seats = [...booking.seats, ...newSeats]; // Append new seats
         }
         else {
+            // Create a new booking
             booking = new models_1.default({ userid, username, date, movieName, showTime, seats });
         }
         yield booking.save();
@@ -34,8 +38,4 @@ router.post('/bookings_collection', (req, res) => __awaiter(void 0, void 0, void
         res.status(500).json({ message: 'Error saving booking', error: error.message });
     }
 }));
-// 404 handler for undefined routes
-router.use((req, res) => {
-    res.status(404).json({ message: 'API route not found' });
-});
 exports.default = router;

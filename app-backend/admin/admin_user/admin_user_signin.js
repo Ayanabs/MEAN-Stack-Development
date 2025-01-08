@@ -19,6 +19,7 @@ const router = express_1.default.Router();
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { adminUsername, adminPassword } = req.body;
+        console.log(adminUsername, adminPassword);
         // Input Validation
         if (!adminUsername || !adminPassword) {
             res.status(400).json({ message: 'Username and password are required.' });

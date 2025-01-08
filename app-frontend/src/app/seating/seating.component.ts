@@ -6,6 +6,8 @@ import { ChangeDetectorRef } from '@angular/core';
 import { safeLocalStorage } from '../utils/local-storage.util'; // Update the path as needed
 import { SessionService } from '../../services/session.service';
 
+
+
 @Component({
   selector: 'seat-root',
   standalone: true,
@@ -34,21 +36,27 @@ export class SeatingComponent implements OnInit {
 
   // Seat Management
   rows = [
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(12).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(15).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(12).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),
+    Array(7).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(12).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(15).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(12).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(7).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
   ];
 
   bookedSeat: { row: number; seat: number; status: string } | null = null;
   loggedInUserId: string | null = null;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService) { }
 
   ngOnInit(): void {
-    // Removed token-based authentication logic
+    const sessionData = this.sessionService.getSession();
+    if (sessionData) {
+      this.loggedInUserId = sessionData.userId;
+    }
+    const today = new Date();
+    this.selectedDay = { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
     this.generateCalendar();
+
     this.loadMovies();
   }
 
@@ -74,9 +82,9 @@ export class SeatingComponent implements OnInit {
         this.selectedDay?.month === this.currentMonth &&
         this.selectedDay?.year === this.currentYear;
 
-      this.calendarDays.push({ day, isCurrent: isCurrentDay, isSelected: isSelectedDay });
-    }
-  }
+      this.calendarDays.push({ day, isCurrent: isCurrentDay, isSelected: isSelectedDay });
+    }
+  }
 
   prevMonth(): void {
     if (this.currentMonth === 0) {
@@ -106,7 +114,7 @@ export class SeatingComponent implements OnInit {
       this.generateCalendar();
     }
   }
-  
+
 
   resetSeats(): void {
     this.rows.forEach((row) => {
@@ -139,6 +147,10 @@ export class SeatingComponent implements OnInit {
       this.selectedMovieImage = selectedMovie.picture;
       this.selectedMovieTimes = selectedMovie.showTimes;
       this.selectedTime = this.selectedMovieTimes[0];
+
+      this.resetSeats();
+      this.seatOwnershipMap = {}; // Clear the seat ownership map as well
+
       this.loadBookingsForDate();
 
       this.updateSession();
@@ -154,9 +166,9 @@ export class SeatingComponent implements OnInit {
       console.error('No date selected.');
       return;
     }
-  
+
     const formattedDate = `${this.selectedDay?.year}-${this.selectedDay.month + 1}-${this.selectedDay?.day}`;
-  
+
     // Convert selectedSeats into the correct format
     const formattedSeats = this.cartData.selectedSeats.map((seat) => {
       const [row, seatNumber] = seat.split('-');
@@ -167,12 +179,12 @@ export class SeatingComponent implements OnInit {
         return null;
       }
     }).filter(seat => seat !== null);
-  
+
     if (formattedSeats.length === 0) {
       console.error('No valid seats to confirm.');
       return;
     }
-  
+
     const bookingData = {
       userid: this.cartData.userid,
       username: this.cartData.username,
@@ -181,9 +193,9 @@ export class SeatingComponent implements OnInit {
       showTime: this.cartData.selectedTime,
       seats: formattedSeats
     };
-  
+
     console.log("Booking data:", bookingData);
-  
+
     this.http.post('http://localhost:5000/api/users/bookings_collection', bookingData).subscribe(
       (response) => {
         console.log('Booking saved successfully:', response);
@@ -195,8 +207,8 @@ export class SeatingComponent implements OnInit {
       }
     );
   }
-  
-  
+
+
 
   cartData: {
     userid: string,
@@ -205,12 +217,12 @@ export class SeatingComponent implements OnInit {
     selectedTime: string;
     selectedSeats: string[];
   } = {
-    userid:'',
-    username: '',
-    selectedMovie: '',
-    selectedTime: '',
-    selectedSeats: []
-  };
+      userid: '',
+      username: '',
+      selectedMovie: '',
+      selectedTime: '',
+      selectedSeats: []
+    };
 
   cartItems: any[] = [];
 
@@ -221,7 +233,7 @@ export class SeatingComponent implements OnInit {
       const selectedSeats = this.rows.flatMap((row, rowIndex) =>
         row.map((seat, seatIndex) => (seat.selected ? { row: rowIndex + 1, seat: seatIndex + 1 } : null))
       ).filter((seat) => seat !== null);
-  
+
       const updatedSessionData = {
         sessionId: sessionData.sessionId,
         userId: sessionData.userId,
@@ -230,17 +242,17 @@ export class SeatingComponent implements OnInit {
         selectedTime: this.selectedTime,
         selectedSeats: selectedSeats // Now it stores objects with row and seat
       };
-  
+
       this.sessionService.setSession(updatedSessionData);
-  
+
       this.cartData = {
-        userid :updatedSessionData.userId,
+        userid: updatedSessionData.userId,
         username: updatedSessionData.username || '',
         selectedMovie: updatedSessionData.selectedMovie,
         selectedTime: updatedSessionData.selectedTime,
         selectedSeats: selectedSeats.map(seat => `${seat.row}-${seat.seat}`), // Convert the seat objects back to a string format for the cartData
       };
-  
+
       this.cartItems = [...selectedSeats.map(seat => `${seat.row}-${seat.seat}`)];
       console.log("Session data after movie selection:", updatedSessionData);
     } else {
@@ -255,27 +267,37 @@ export class SeatingComponent implements OnInit {
     }
 
     const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-    
-   
+    const sessionData = this.sessionService.getSession();
+    const loggedInUserId = sessionData ? sessionData.userId : null;
+
     const url = `http://localhost:5000/api/users/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
-    
-    // Send the booking data to the server to fetch booked seats
+
     this.http.get<any>(url).subscribe(
       (response) => {
         if (response && response.seats && response.seats.length > 0) {
-          // Populate booked seats based on the response
-          response.seats.forEach((seat: { row: number; seat: number }) => {
-            if (
-              seat.row > 0 &&
-              seat.row <= this.rows.length &&
-              seat.seat > 0 &&
-              seat.seat <= this.rows[seat.row - 1].length
-            ) {
-              this.rows[seat.row - 1][seat.seat - 1].booked = true;
+          const bookedSeats = response.seats;
+
+          bookedSeats.forEach((seat: { row: number; seat: number }) => {
+            const seatRowIndex = seat.row - 1; // Adjust for zero-indexing
+            const seatColumnIndex = seat.seat - 1; // Adjust for zero-indexing
+
+            this.rows[seatRowIndex][seatColumnIndex].booked = true;
+
+            if (loggedInUserId) {
+              // Check if the logged-in user owns the seat
+              const isOwnedByUser = response.userid === loggedInUserId;
+              this.rows[seatRowIndex][seatColumnIndex].ownedByUser = isOwnedByUser;
+
+              // Update the seatOwnershipMap for tracking
+              const seatKey = `${seat.row}-${seat.seat}`;
+              this.seatOwnershipMap[seatKey] = isOwnedByUser ? loggedInUserId : '';
+            } else {
+              // If no session data, default ownership to false
+              this.rows[seatRowIndex][seatColumnIndex].ownedByUser = false;
             }
           });
         } else {
-          console.log('No bookings found for the selected configuration.');
+          console.log('No bookings found for the selected date and movie.');
         }
       },
       (error) => {
@@ -283,7 +305,6 @@ export class SeatingComponent implements OnInit {
         this.resetSeats(); // Ensure seats are cleared on error
       }
     );
-
   }
 
 
@@ -293,7 +314,7 @@ export class SeatingComponent implements OnInit {
     if (!seat.booked) {
       seat.selected = !seat.selected;
       console.log(`Seat toggled: row=${rowIndex + 1}, seat=${seatIndex + 1}, selected=${seat.selected}`);
-  
+
       // Ensure seat format is 'row-seat'
       const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
       if (seat.selected) {
@@ -304,12 +325,12 @@ export class SeatingComponent implements OnInit {
           this.cartData.selectedSeats.splice(seatIndex, 1);
         }
       }
-  
+
       this.updateSession();
     }
   }
-  
-  
+
+
 
   getSeatNumber(rowIndex: number, seatIndex: number): number {
     let seatStart = 1;
@@ -330,37 +351,88 @@ export class SeatingComponent implements OnInit {
   //   }
   // }
 
-  removeBooking(rowIndex: number, seatIndex: number): void {
-    const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
-    const seat = this.rows[rowIndex][seatIndex];
-    if (
-      seat.booked &&
-      this.selectedDay &&
-      this.selectedMovie &&
-      this.selectedTime &&
-      this.seatOwnershipMap[seatKey] === this.loggedInUserId
-    ) {
-      const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-      const url = `http://localhost:5000/api/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
 
-      this.http.delete(url).subscribe(
+  // console.log("Remove Booking data")
+  //     console.log("seat key:",seatKey)
+  //     console.log("seat:",seat)
+  //     console.log("UserId:",loggedInUserId)
+  //     console.log("Selected movie:",this.selectedMovie)
+  //     console.log("Selected movie:",this.selectedTime)
+  //     console.log("Seat Ownership Map:", this.seatOwnershipMap);
+  //     console.log("User owned:",this.seatOwnershipMap[seatKey] );
+
+  removeBooking(rowIndex: number, seatIndex: number): void {
+    const sessionData = this.sessionService.getSession();
+    const loggedInUserId = sessionData.userId;
+    console.log("Booking Remove");
+    console.log("UserId:", loggedInUserId);
+
+    console.log("Selected movie:", this.selectedMovie);
+    console.log("Selected time:", this.selectedTime);
+    console.log("seat", rowIndex, seatIndex);
+
+    if (!this.selectedDay || !this.selectedMovie || !this.selectedTime || !loggedInUserId) {
+      console.error('Missing necessary information for booking removal.');
+      return;
+    }
+
+    const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+    const seatToRemove = `${rowIndex + 1}-${seatIndex + 1}`; // 'row-seat' format
+
+    // Get the current booking data
+    this.http.get<any>(`http://localhost:5000/api/users/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`)
+      .subscribe(
         (response) => {
-          console.log('Booking removed successfully:', response);
-          delete this.seatOwnershipMap[seatKey];
-          seat.booked = false;
-          this.loadBookingsForDate();
+          if (!response || !response.seats) {
+            console.error('No bookings found for the selected configuration.');
+            return;
+          }
+
+          console.log("Selected seating from DB:", response);
+          const bookingid = response._id;
+
+          console.log("userid in the booked seat:", response.userid);
+          console.log("userid in the session:", loggedInUserId);
+
+          // Check if the logged-in user is the one who made the booking
+          if (response.userid !== loggedInUserId) {
+            console.error('You cannot remove a booking that was not made by you.');
+            return;
+          }
+
+          // Send a request to the backend to remove the specific seat
+          this.http.put(`http://localhost:5000/api/users/booking/remove_seat/${bookingid}`, { seat: seatToRemove })
+            .subscribe(
+              () => {
+                console.log('Seat removed successfully.');
+
+                // Update the UI by marking the seat as available again
+                this.rows[rowIndex][seatIndex].booked = false;
+
+                // Optionally, reset the seat selection after removal
+                this.rows[rowIndex][seatIndex].selected = false;
+
+                // Reload the bookings after removal
+                this.loadBookingsForDate();
+              },
+              (error) => {
+                console.error('Error removing the seat:', error);
+              }
+            );
         },
         (error) => {
-          console.error('Error removing booking:', error);
+          console.error('Error fetching booking:', error);
         }
       );
-    } else {
-      console.warn('Invalid configuration for removing booking');
-    }
   }
 
+
+
+
+
   isSeatOwnedByUser(rowIndex: number, seatIndex: number): boolean {
+    const sessionData = this.sessionService.getSession();
     const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
-    return this.seatOwnershipMap[seatKey] === this.loggedInUserId;
+    return this.seatOwnershipMap[seatKey] === sessionData.userId;
   }
 }

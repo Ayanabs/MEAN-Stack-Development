@@ -53,6 +53,7 @@ const admin_retrieve_movieById_1 = __importDefault(require("./admin/admin_movie/
 const user_logout_routes_1 = __importDefault(require("./user/userlogoutbackend/user_logout.routes"));
 const up_save_bookings_routes_1 = __importDefault(require("./seating/up_save_bookings_routes"));
 const get_bookings_routes_1 = __importDefault(require("./seating/get_bookings_routes"));
+const remove_booking_routes_1 = __importDefault(require("./seating/remove_booking_routes"));
 const express_session_1 = __importDefault(require("express-session"));
 const path_1 = __importDefault(require("path"));
 dotenv.config(); // Load environment variables from .env
@@ -92,6 +93,8 @@ app.use('/api/users', (req, res, next) => {
     console.log(`Accessed route: ${req.originalUrl}`);
     next(); // Pass control to the next handler
 });
+// Use the insert booking route
+app.use('/api/users/booking', remove_booking_routes_1.default);
 // Use the get seating route
 app.use('/api/users', get_bookings_routes_1.default);
 // Use the signup route

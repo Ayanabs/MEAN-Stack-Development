@@ -14,6 +14,7 @@ import retrieveMovieById from './admin/admin_movie/admin_retrieve_movieById';
 import userlogout from './user/userlogoutbackend/user_logout.routes';
 import insertBooking from './seating/up_save_bookings_routes';
 import retrieveBooking from './seating/get_bookings_routes';
+import removeBooking from './seating/remove_booking_routes';
 
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
@@ -72,8 +73,13 @@ app.use('/api/users', (req: Request, res: Response, next: NextFunction) => {
   next();  // Pass control to the next handler
 });
 
+// Use the insert booking route
+app.use('/api/users/booking',removeBooking  );
+
+
 // Use the get seating route
 app.use('/api/users',retrieveBooking );
+
 // Use the signup route
 app.use('/api/users', userSignUpRoutes);
 
@@ -109,6 +115,8 @@ app.use('/api/users', retrieveMovieById);
 
 // Use the insert booking route
 app.use('/api/users',insertBooking  );
+
+
 
 
 

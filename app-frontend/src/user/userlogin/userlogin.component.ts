@@ -62,7 +62,7 @@ export class UserloginComponent {
       username: this.clientusername,
       password: this.clientpassword,
     };
-    console.log('Login data:', loginData);
+    // console.log('Login data:', loginData);
 
     this.http.post<{  sessionId: string; userId: string; username: string }>(
       'http://localhost:5000/api/users/login',
