@@ -10,7 +10,7 @@ const bookingSchema = new mongoose_1.default.Schema({
     username: { type: String, required: true },
     date: { type: String, required: true },
     movieName: { type: String, required: true },
-    showTime: { type: String, required: true },
+    showTimes: { type: String, required: true },
     seats: [
         {
             row: { type: Number, required: true },

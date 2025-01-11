@@ -190,7 +190,7 @@ export class SeatingComponent implements OnInit {
       username: this.cartData.username,
       date: formattedDate,
       movieName: this.cartData.selectedMovie,
-      showTime: this.cartData.selectedTime,
+      showTimes: this.cartData.selectedTime,
       seats: formattedSeats
     };
 

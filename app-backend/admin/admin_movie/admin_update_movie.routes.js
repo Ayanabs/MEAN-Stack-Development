@@ -42,12 +42,12 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 // Route to update a movie by ID
 router.put('/updatemovie/:id', upload.single('picture'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening, showTime } = req.body;
+    const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening, showTimes } = req.body;
     let updateData = { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening };
     // Handle timeSlots
-    if (showTime) {
+    if (showTimes) {
         // Ensure timeSlots is an array
-        updateData.showTime = Array.isArray(showTime) ? showTime : JSON.parse(showTime);
+        updateData.showTimes = Array.isArray(showTimes) ? showTimes : JSON.parse(showTimes);
     }
     try {
         // Find the existing movie

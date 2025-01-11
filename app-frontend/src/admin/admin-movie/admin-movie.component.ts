@@ -34,7 +34,7 @@ export class AdminMovieComponent {
     director: '',
     nowScreening: '', // "Yes" or "No"
     additionalInfo: '',
-    showTime: [] as string[],
+    showTimes: [] as string[],
   };
 
 
@@ -47,16 +47,16 @@ export class AdminMovieComponent {
   }
 
 
-  addTimeSlot() {
-    this.movie.showTime.push(''); // Add an empty time slot
+  addshowTimes() {
+    this.movie.showTimes.push(''); // Add an empty time slot
   }
 
-  removeTimeSlot(index: number) {
-    this.movie.showTime.splice(index, 1); // Remove time slot at the specified index
+  removeshowTimes(index: number) {
+    this.movie.showTimes.splice(index, 1); // Remove time slot at the specified index
   }
 
-  updateTimeSlot(index: number, value: string) {
-    this.movie.showTime[index] = value; // Update the specific time slot
+  updateshowTimes(index: number, value: string) {
+    this.movie.showTimes[index] = value; // Update the specific time slot
   }
 
   onSubmit() {
@@ -71,8 +71,8 @@ export class AdminMovieComponent {
       insertMovieData.append('watchTime', this.movie.watchTime?.toString() ?? '');
       insertMovieData.append('director', this.movie.director || '');
       insertMovieData.append('nowScreening',  this.movie.nowScreening === 'Yes' ? 'true' : 'false' );
-      this.movie.showTime.forEach((slot, index) =>
-        insertMovieData.append(`timeSlots[${index}]`, slot)
+      this.movie.showTimes.forEach((slot, index) =>
+        insertMovieData.append(`showTimes[${index}]`, slot)
       );
 
       // console.log('movieName', this.movie.movieName)
@@ -111,7 +111,7 @@ export class AdminMovieComponent {
 
   resetForm() {
     this.movieInsertForm.resetForm(); // Reset form fields
-    this.movie.showTime = [];
+    this.movie.showTimes = [];
     const fileInput = document.getElementById('picture') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = ''; // Clear file input

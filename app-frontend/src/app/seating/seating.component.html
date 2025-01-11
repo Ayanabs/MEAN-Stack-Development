@@ -16,7 +16,7 @@
 
     <!-- Showtime Selection -->
     <div class="showtime-selection">
-      <label for="time">Showtime:</label>
+      <label for="time">Showtimes:</label>
       <select id="time" [(ngModel)]="selectedTime" (change)="loadBookingsForDate()">
         <option *ngFor="let time of selectedMovieTimes">{{ time }}</option>
       </select>

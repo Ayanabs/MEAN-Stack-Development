@@ -12,7 +12,7 @@ export interface BookingDocument extends Document {
   username:string,
   date: string;
   movieName: string;
-  showTime: string;
+  showTimes: string;
   seats: Seat[];
 }
 
@@ -22,7 +22,7 @@ const bookingSchema: Schema<BookingDocument> = new mongoose.Schema({
   username:{type: String,required:true},
   date: { type: String, required: true },
   movieName: { type: String, required: true },
-  showTime: { type: String, required: true },
+  showTimes: { type: String, required: true },
   seats: [
     {
       row: { type: Number, required: true },

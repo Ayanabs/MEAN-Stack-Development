@@ -40,7 +40,7 @@ export class AdminDashboardUpdatemovieComponent {
     next: (data) => {
       this.movie = { ...data,
         nowScreening: data.nowScreening ? 'Yes' : 'No',
-        showTime: data.showTime || [],
+        showTimes: data.showTimes || [],
       }; 
       console.log('Fetched movie data:', JSON.stringify(this.movie, null, 2));
     },
@@ -63,18 +63,18 @@ export class AdminDashboardUpdatemovieComponent {
   }
 
     // Add a new time slot
-    addTimeSlot() {
-      this.movie.showTime.push(''); // Add an empty time slot
+    addshowTimes() {
+      this.movie.showTimes.push(''); // Add an empty time slot
     }
   
     // Remove a time slot
-    removeTimeSlot(index: number) {
-      this.movie.showTime.splice(index, 1);
+    removeshowTimes(index: number) {
+      this.movie.showTimes.splice(index, 1);
     }
   
   // Submit updated movie data to the backend
   onSubmit() {
-    if (this.movieUpdateForm.invalid || this.movie.showTime.length === 0) {
+    if (this.movieUpdateForm.invalid || this.movie.showTimes.length === 0) {
       // Mark all fields as touched to show validation errors
       this.movieUpdateForm.form.markAllAsTouched();
       alert('Please fill in all required fields before submitting.');
@@ -92,8 +92,8 @@ export class AdminDashboardUpdatemovieComponent {
     UpdateFormData.append('nowScreening',  this.movie.nowScreening === 'Yes' ? 'true' : 'false' );
 
      // Append time slots
-     this.movie.showTime.forEach((slot: string | Blob, index: any) =>
-      UpdateFormData.append(`showTime[${index}]`, slot)
+     this.movie.showTimes.forEach((slot: string | Blob, index: any) =>
+      UpdateFormData.append(`showTimes[${index}]`, slot)
     );
     
     if (this.movie.picture) {

@@ -20,7 +20,7 @@ router.get('/bookings_collection/:date/:movie/:time', (req, res) => __awaiter(vo
     const { date, movie, time } = req.params;
     console.log("get booking file accessed:", req.params);
     try {
-        const booking = yield models_1.default.findOne({ date, movieName: movie, showTime: time });
+        const booking = yield models_1.default.findOne({ date, movieName: movie, showTimes: time });
         if (booking) {
             res.status(200).json(booking);
         }
