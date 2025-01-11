@@ -17,7 +17,7 @@ const movieSchema = new mongoose_1.default.Schema({
     director: { type: String, required: true },
     nowScreening: { type: Boolean, required: true },
     additionalInfo: { type: String },
-    timeSlots: { type: [String], required: true },
+    showTime: { type: [String], required: true },
 });
 // Create Mongoose Model
 exports.Movie = mongoose_1.default.model('Movie', movieSchema, 'movie_collection');
