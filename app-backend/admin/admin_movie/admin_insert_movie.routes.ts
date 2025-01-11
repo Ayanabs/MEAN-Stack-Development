@@ -21,7 +21,7 @@ const upload = multer({ storage });
 // Define Route to Insert a Movie
 app.post('/movies',upload.single('picture'), async (req: Request, res: Response):Promise<void> => {
   try {
-    const { movieName, category, releaseYear, picture, additionalInfo,cast,trailerLink,watchTime,director,nowScreening,showTime } = req.body;
+    const { movieName, category, releaseYear, picture, additionalInfo,cast,trailerLink,watchTime,director,nowScreening,showTimes } = req.body;
 
    
 
@@ -38,7 +38,7 @@ app.post('/movies',upload.single('picture'), async (req: Request, res: Response)
     console.log("nowscreening ",nowScreening)
 
    
-    if (!movieName || !category || !releaseYear || !req.file?.path ||!cast ||!trailerLink||!watchTime||!director ||!nowScreening ||!showTime ) {
+    if (!movieName || !category || !releaseYear || !req.file?.path ||!cast ||!trailerLink||!watchTime||!director ||!nowScreening ||!showTimes ) {
        res.status(400).json({ message: 'All fields are required!' });
        return;
     }
@@ -50,11 +50,11 @@ app.post('/movies',upload.single('picture'), async (req: Request, res: Response)
     }
 
      // Validate timeSlots
-     const parsedshowTime = Array.isArray(showTime)
-     ? showTime
-     : JSON.parse(showTime);
+     const parsedshowTimes = Array.isArray(showTimes)
+     ? showTimes
+     : JSON.parse(showTimes);
 
-   if (!parsedshowTime || parsedshowTime.length === 0) {
+   if (!parsedshowTimes || parsedshowTimes.length === 0) {
      res.status(400).json({ message: 'At least one time slot is required!' });
      return;
    }
@@ -71,7 +71,7 @@ app.post('/movies',upload.single('picture'), async (req: Request, res: Response)
       director,
       nowScreening,
       additionalInfo,
-      showTime: parsedshowTime,
+      showTimes: parsedshowTimes,
     });
 
     // Save to the database

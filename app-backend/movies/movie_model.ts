@@ -12,7 +12,7 @@ const movieSchema = new mongoose.Schema({
     director: { type: String, required: true },
     nowScreening: { type: Boolean, required: true }, 
     additionalInfo: { type: String }, 
-    showTime: { type: [String], required: true },
+    showTimes: { type: [String], required: true },
   });
   
   // Create Mongoose Model

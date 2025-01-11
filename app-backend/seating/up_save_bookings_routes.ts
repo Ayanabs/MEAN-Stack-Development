@@ -9,17 +9,17 @@ interface BookingRequest {
   username:string,
   date: string;
   movieName: string;
-  showTime: string;
+  showTimes: string;
   seats: [];
 }
 
 // Save or update bookings
 router.post('/bookings_collection', async (req: Request, res: Response) => {
-  const { userid, username, date, movieName, showTime, seats }: BookingRequest = req.body;
+  const { userid, username, date, movieName, showTimes, seats }: BookingRequest = req.body;
   console.log("Backend Booking data", req.body);
 
   try {
-    let booking = await Booking.findOne({ userid, username, date, movieName, showTime });
+    let booking = await Booking.findOne({ userid, username, date, movieName, showTimes });
 
     if (booking) {
       // Merge new seats with existing ones, ensuring no duplicates
@@ -28,7 +28,7 @@ router.post('/bookings_collection', async (req: Request, res: Response) => {
       booking.seats = [...booking.seats, ...newSeats]; // Append new seats
     } else {
       // Create a new booking
-      booking = new Booking({ userid, username, date, movieName, showTime, seats });
+      booking = new Booking({ userid, username, date, movieName, showTimes, seats });
     }
 
     await booking.save();
