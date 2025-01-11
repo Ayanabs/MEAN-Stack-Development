@@ -30,7 +30,7 @@ const upload = (0, multer_1.default)({ storage });
 app.post('/movies', upload.single('picture'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { movieName, category, releaseYear, picture, additionalInfo, cast, trailerLink, watchTime, director, nowScreening, timeSlots } = req.body;
+        const { movieName, category, releaseYear, picture, additionalInfo, cast, trailerLink, watchTime, director, nowScreening, showTime } = req.body;
         console.log("movieName ", movieName);
         console.log("category ", category);
         console.log("releaseYear ", releaseYear);
@@ -41,7 +41,7 @@ app.post('/movies', upload.single('picture'), (req, res) => __awaiter(void 0, vo
         console.log("watchtime ", watchTime);
         console.log("director ", director);
         console.log("nowscreening ", nowScreening);
-        if (!movieName || !category || !releaseYear || !((_a = req.file) === null || _a === void 0 ? void 0 : _a.path) || !cast || !trailerLink || !watchTime || !director || !nowScreening || !timeSlots) {
+        if (!movieName || !category || !releaseYear || !((_a = req.file) === null || _a === void 0 ? void 0 : _a.path) || !cast || !trailerLink || !watchTime || !director || !nowScreening || !showTime) {
             res.status(400).json({ message: 'All fields are required!' });
             return;
         }
@@ -51,10 +51,10 @@ app.post('/movies', upload.single('picture'), (req, res) => __awaiter(void 0, vo
             return;
         }
         // Validate timeSlots
-        const parsedTimeSlots = Array.isArray(timeSlots)
-            ? timeSlots
-            : JSON.parse(timeSlots);
-        if (!parsedTimeSlots || parsedTimeSlots.length === 0) {
+        const parsedshowTime = Array.isArray(showTime)
+            ? showTime
+            : JSON.parse(showTime);
+        if (!parsedshowTime || parsedshowTime.length === 0) {
             res.status(400).json({ message: 'At least one time slot is required!' });
             return;
         }
@@ -70,7 +70,7 @@ app.post('/movies', upload.single('picture'), (req, res) => __awaiter(void 0, vo
             director,
             nowScreening,
             additionalInfo,
-            timeSlots: parsedTimeSlots,
+            showTime: parsedshowTime,
         });
         // Save to the database
         yield newMovie.save();

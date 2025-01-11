@@ -16,7 +16,7 @@ import { AdminSignupComponent } from '../admin/admin-signup/admin-signup.compone
 
 
 export const routes: Routes = [
-    { path: '', component: AdminSigninComponent }, // Default route
+    { path: '', component: AdminDashboardMovieComponent}, // Default route
     { path: 'adminsignin', component: AdminSigninComponent },
     { path: 'adminsignup', component: AdminSignupComponent },
     { path: 'userlogin', component: UserloginComponent,canActivate: [AuthGuard]  },
@@ -25,6 +25,7 @@ export const routes: Routes = [
     { path: 'singlemovie/:id', component: SinglemovieComponent},
     { path: 'seating', component: SeatingComponent},
     { path: 'admin-dashboard', component: AdminDashboardComponent},
+    { path: 'admin-moviedashboard', component: AdminDashboardMovieComponent},
 
 ];
 

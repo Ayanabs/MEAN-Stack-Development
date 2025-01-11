@@ -8,7 +8,7 @@ import { UsersignupComponent } from '../user/usersignup/usersignup.component';
 import { SessionService } from '../services/session.service';
 @Component({
   selector: 'app-navbar',
-  imports: [FormsModule,NgIf,NgFor,UserloginComponent,UsersignupComponent],
+  imports: [FormsModule,NgIf,NgFor,UserloginComponent,UsersignupComponent,RouterLink],
   standalone:true,
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
@@ -49,6 +49,7 @@ export class NavbarComponent {
     } else {
       // Otherwise, show login modal
       this.isLoginModalVisible = true;
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url } });
     }
   }
 
@@ -67,6 +68,7 @@ export class NavbarComponent {
     // Handle post-login logic
     this.isLoggedIn = true;
     this.closeLoginModal();
+    window.location.reload();
   }
 
   logout() {

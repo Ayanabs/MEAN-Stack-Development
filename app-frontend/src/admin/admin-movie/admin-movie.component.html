@@ -59,18 +59,18 @@
 
    <!-- Time Slots -->
    <label>Time Slots:</label>
-   <div *ngFor="let slot of movie.timeSlots; let i = index" class="input-group mb-2">
+   <div *ngFor="let slot of movie.showTime; let i = index" class="input-group mb-2">
      <input
        type="time"
-       [(ngModel)]="movie.timeSlots[i]"
-       name="timeSlot{{ i }}"
+       [(ngModel)]="movie.showTime[i]"
+       name="showTime{{ i }}"
        class="form-control"
        required
      />
      <button type="button" class="btn btn-danger" (click)="removeTimeSlot(i)">Remove</button>
    </div>
    <button type="button" class="btn btn-secondary" (click)="addTimeSlot()">Add Time Slot</button>
-   <div *ngIf="movieInsertForm.submitted && movie.timeSlots.length === 0" class="error">
+   <div *ngIf="movieInsertForm.submitted && movie.showTime.length === 0" class="error">
      At least one time slot is required.
    </div>
  

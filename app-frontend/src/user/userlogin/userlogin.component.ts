@@ -3,6 +3,7 @@ import { HttpClient,HttpClientModule  } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SessionService } from '../../services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-userlogin',
@@ -18,11 +19,17 @@ export class UserloginComponent {
   @Input() isVisible: boolean = false;
   @Output() closeModal = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<void>();
+  returnUrl: string = '/';
+  constructor(private http: HttpClient, private sessionService: SessionService, private route: ActivatedRoute,private router: Router,) {}
 
-  constructor(private http: HttpClient, private sessionService: SessionService,) {}
 
-
-
+  ngOnInit() {
+    // Capture the current route from the query parameter
+    this.route.queryParams.subscribe((params) => {
+      this.returnUrl = params['returnUrl'] || '/';
+      console.log("current URL: ",this.returnUrl)
+    });
+  }
   // Function to close the modal
   close() {
     this.isVisible = false;
@@ -91,10 +98,11 @@ export class UserloginComponent {
         // Show success alert with the user's username
         alert(`Login successful! Welcome back, ${this.clientusername}.`);
         this.loginSuccess.emit(); // Emit login success event
-
+       
         // Optionally close the modal if login is within a modal
         this.resetForm();
         this.close();
+        this.router.navigateByUrl(this.returnUrl);
       },
         error: (error: any) => {
           console.error('Login failed', error);
