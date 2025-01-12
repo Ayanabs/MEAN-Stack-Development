@@ -62,7 +62,7 @@ jobs:
         run: npm run build
         working-directory: app-frontend
 
-      # Install Docker Compose
+       # Install Docker Compose
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
@@ -90,9 +90,16 @@ jobs:
           docker save -o mean-stack-frontend.tar mean-stack-frontend
           docker save -o mean-stack-backend.tar mean-stack-backend
 
+      # Restart Docker Containers Locally (without MongoDB)
+      - name: Restart Docker Containers
+        run: |
+          docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
+          docker-compose up --build -d frontend backend
+
+
+
       # Restart Docker Containers Locally
       - name: Restart Docker Containers
         run: |
-          docker stop mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
           docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
           docker-compose up --build -d
