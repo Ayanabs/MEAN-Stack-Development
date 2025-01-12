@@ -21,8 +21,8 @@ describe('SinglemovieComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // Correct the import structure
-      declarations: [SinglemovieComponent],
+      imports: [HttpClientTestingModule,SinglemovieComponent], // Correct the import structure
+      
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteMock },  // Provide the mock ActivatedRoute
       ],

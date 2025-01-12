@@ -1,7 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NavbarComponent } from './navbar.component';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+
+// Mock ActivatedRoute to simulate route behavior in tests
+const activatedRouteMock = {
+  snapshot: {
+    paramMap: {
+      get: jasmine.createSpy('get').and.returnValue('Movie'),
+    },
+  },
+};
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
@@ -11,6 +21,10 @@ describe('NavbarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,NavbarComponent],
+     
+      providers: [
+        { provide: ActivatedRoute, useValue: activatedRouteMock },  // Provide mock ActivatedRoute
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavbarComponent);
