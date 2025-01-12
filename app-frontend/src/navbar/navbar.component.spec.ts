@@ -8,8 +8,8 @@ describe('NavbarComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      declarations: [NavbarComponent],
+      imports: [HttpClientTestingModule,NavbarComponent],
+     
     });
 
     component = TestBed.createComponent(NavbarComponent).componentInstance;
