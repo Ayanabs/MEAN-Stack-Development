@@ -14,6 +14,7 @@ describe('NavbarComponent', () => {
 
     component = TestBed.createComponent(NavbarComponent).componentInstance;
     httpMock = TestBed.inject(HttpTestingController);  
+  });
 
   it('should fetch movies', () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
