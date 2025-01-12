@@ -20,12 +20,14 @@ export class SinglemovieComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
-    // Get the movie ID from the route parameter
-    this.movieId = this.route.snapshot.paramMap.get('id')!;
-    console.log(this.movieId)
-    if (this.movieId) {
-      this.fetchMovieDetails();
-    }
+    // Subscribe to route parameter changes
+    this.route.paramMap.subscribe((params) => {
+      const newMovieId = params.get('id')!;
+      if (newMovieId && newMovieId !== this.movieId) {
+        this.movieId = newMovieId;
+        this.fetchMovieDetails(); // Fetch details for the new movie ID
+      }
+    });
   }
 
   // Fetch movie details by ID

@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Movie } from './movie_model'; // Movie model
+import { Movie } from '../../movies/movie_model'; // Movie model
 import fs from 'fs';
 import path from 'path';
 
@@ -33,9 +33,15 @@ const upload = multer({ storage: storage, fileFilter: fileFilter });
 // Route to update a movie by ID
 router.put('/updatemovie/:id', upload.single('picture'), async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening } = req.body;
+  const { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening,showTimes } = req.body;
   let updateData: any = { movieName, category, releaseYear, additionalInfo, cast, trailerLink, watchTime, director, nowScreening };
 
+  // Handle timeSlots
+  if (showTimes) {
+    // Ensure timeSlots is an array
+    updateData.showTimes = Array.isArray(showTimes) ? showTimes : JSON.parse(showTimes);
+  }
+  
   try {
     // Find the existing movie
     const existingMovie = await Movie.findById(id);

@@ -1,9 +1,47 @@
+
 services:
-  frontend:
-    image: nginx:alpine
-    volumes:
-      - /d/MEAN-Stack-Development/app-frontend/dist/app-frontend/browser:/usr/share/nginx/html:ro
-     
+  backend:
+    build:
+      context: ./app-backend
+    image: mean-stack-backend
+    container_name: mean-stack-development-backend-1
     ports:
-      - "8080:80"
-  
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb+srv://neethilakumararatne17:8qm1p5RYVH3fNtPz@mongocluster.gkwkw.mongodb.net/mydatabase?retryWrites=true&w=majority
+
+    # depends_on:
+    #   - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mean-stack-development-mongo-1
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./app-frontend
+    image: mean-stack-frontend
+    container_name: mean-stack-development-frontend-1
+    ports:
+      - "4200:80"
+    volumes:
+      -  ./app-frontend/dist/app-frontend:/usr/share/nginx/html
+    networks:
+      - app-network
+
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge

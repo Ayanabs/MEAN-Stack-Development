@@ -20,7 +20,9 @@ export class AdminSigninComponent {
     private http: HttpClient, // Inject HttpClient to make HTTP requests
     private router: Router
   ) {}
-
+  signup(){
+    this.router.navigate(['/adminsignup']);
+  }
   // Function to validate username
   validateUsername(username: string): boolean {
     const usernamePattern = /^[a-zA-Z0-9_]+$/; // Only letters, numbers, and underscores, no spaces
@@ -58,14 +60,20 @@ export class AdminSigninComponent {
       adminUsername: this.adminusername,
       adminPassword: this.adminpassword,
     };
+    console.log(loginData)
 
     // Make HTTP POST request to the backend API route
     this.http.post('http://localhost:5000/api/admin/login', loginData).subscribe(
       (response: any) => {
-        if (response.success) {
+        if (response) {
           console.log('Login successful:', response.message);
+          this.router.navigateByUrl('/admin-dashboard').then(() => {
+            console.log('Navigated to admin dashboard');
+          }).catch((err) => {
+            console.error('Navigation failed:', err);
+          });;
           // Redirect to the admin dashboard or another page after successful login
-          this.router.navigate(['/admin-dashboard']);
+         
         } else {
           this.errorMessage = response.message || 'Invalid credentials.';
         }

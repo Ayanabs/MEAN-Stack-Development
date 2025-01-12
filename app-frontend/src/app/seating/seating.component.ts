@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
+import { safeLocalStorage } from '../utils/local-storage.util'; // Update the path as needed
+import { SessionService } from '../../services/session.service';
+
+
 
 @Component({
   selector: 'seat-root',
@@ -28,23 +32,31 @@ export class SeatingComponent implements OnInit {
 
   dayNames: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
+  seatOwnershipMap: { [seatKey: string]: string } = {}; // Tracks which user booked each seat
+
   // Seat Management
   rows = [
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(12).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(15).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(12).fill(null).map(() => ({ selected: false, booked: false })),
-    Array(7).fill(null).map(() => ({ selected: false, booked: false })),
+    Array(7).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(12).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(15).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(12).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
+    Array(7).fill(null).map(() => ({ selected: false, booked: false, ownedByUser: false })),
   ];
+
   bookedSeat: { row: number; seat: number; status: string } | null = null;
+  loggedInUserId: string | null = null;
 
-
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService) { }
 
   ngOnInit(): void {
+    const sessionData = this.sessionService.getSession();
+    if (sessionData) {
+      this.loggedInUserId = sessionData.userId;
+    }
     const today = new Date();
     this.selectedDay = { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
     this.generateCalendar();
+
     this.loadMovies();
   }
 
@@ -103,79 +115,7 @@ export class SeatingComponent implements OnInit {
     }
   }
 
-  loadMovies(): void {
-    this.http.get<any[]>('http://localhost:5000/api/users/getmovies').subscribe(
-      (movies) => {
-        // Add a default "Select Movie" option at the beginning of the list
-        this.movies = [{ movieName: 'Select Movie', showTimes: [], picture: '' }, ...movies];
-        
-        // Set default selections
-        this.selectedMovie = this.movies[0].movieName; // "Select Movie"
-        this.selectedMovieImage = ''; // Optionally set a placeholder or blank image
-        this.selectedMovieTimes = ['Select Time'];
-        this.selectedTime = 'Select Time';
-        
-        this.cdr.detectChanges();
-      },
-      (error) => {
-        console.error('Error fetching movies:', error);
-      }
-    );
-  }
-  
-  
-  
-  
 
-  onMovieChange(): void {
-    const selectedMovie = this.movies.find((movie) => movie.movieName === this.selectedMovie);
-    if (selectedMovie) {
-      this.selectedMovieImage = selectedMovie.picture;
-      this.selectedMovieTimes = selectedMovie.showTimes;
-      this.selectedTime = this.selectedMovieTimes[0];
-      this.loadBookingsForDate();
-    }
-  }
-  
-
-  loadBookingsForDate(): void {
-    if (!this.selectedDay || !this.selectedMovie || !this.selectedTime) {
-      // Ensure seats are reset if no valid booking context
-      this.resetSeats();
-      return;
-    }
-  
-    const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-    const url = `http://localhost:5000/api/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
-  
-    // Reset seats before making the HTTP request
-    this.resetSeats();
-  
-    this.http.get<any>(url).subscribe(
-      (response) => {
-        if (response && response.seats && response.seats.length > 0) {
-          // Populate booked seats based on the response
-          response.seats.forEach((seat: { row: number; seat: number }) => {
-            if (
-              seat.row > 0 &&
-              seat.row <= this.rows.length &&
-              seat.seat > 0 &&
-              seat.seat <= this.rows[seat.row - 1].length
-            ) {
-              this.rows[seat.row - 1][seat.seat - 1].booked = true;
-            }
-          });
-        } else {
-          console.log('No bookings found for the selected configuration.');
-        }
-      },
-      (error) => {
-        console.error('Error fetching bookings:', error);
-        this.resetSeats(); // Ensure seats are cleared on error
-      }
-    );
-  }
-  
   resetSeats(): void {
     this.rows.forEach((row) => {
       row.forEach((seat) => {
@@ -185,15 +125,212 @@ export class SeatingComponent implements OnInit {
     });
   }
 
+  loadMovies(): void {
+    this.http.get<any[]>('http://localhost:5000/api/users/getmovies').subscribe(
+      (movies) => {
+        this.movies = [{ movieName: 'Select Movie', showTimes: [], picture: '' }, ...movies];
+        this.selectedMovie = this.movies[0].movieName;
+        this.selectedMovieImage = '';
+        this.selectedMovieTimes = this.movies[0].showTimes;
+        this.selectedTime = this.selectedMovieTimes[0];
+        this.cdr.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching movies:', error);
+      }
+    );
+  }
+
+  onMovieChange(): void {
+    const selectedMovie = this.movies.find((movie) => movie.movieName === this.selectedMovie);
+    if (selectedMovie) {
+      this.selectedMovieImage = selectedMovie.picture;
+      this.selectedMovieTimes = selectedMovie.showTimes;
+      this.selectedTime = this.selectedMovieTimes[0];
+
+      this.resetSeats();
+      this.seatOwnershipMap = {}; // Clear the seat ownership map as well
+
+      this.loadBookingsForDate();
+
+      this.updateSession();
+    }
+  }
+
+  confirmAllBookings(): void {
+    if (!this.cartData.selectedSeats.length) {
+      console.warn('No seats in the cart to confirm.');
+      return;
+    }
+    if (!this.selectedDay) {
+      console.error('No date selected.');
+      return;
+    }
+
+    const formattedDate = `${this.selectedDay?.year}-${this.selectedDay.month + 1}-${this.selectedDay?.day}`;
+
+    // Convert selectedSeats into the correct format
+    const formattedSeats = this.cartData.selectedSeats.map((seat) => {
+      const [row, seatNumber] = seat.split('-');
+      if (row && seatNumber) {
+        return { row: parseInt(row, 10), seat: parseInt(seatNumber, 10) };
+      } else {
+        console.warn(`Invalid seat format: ${seat}`);
+        return null;
+      }
+    }).filter(seat => seat !== null);
+
+    if (formattedSeats.length === 0) {
+      console.error('No valid seats to confirm.');
+      return;
+    }
+
+    const bookingData = {
+      userid: this.cartData.userid,
+      username: this.cartData.username,
+      date: formattedDate,
+      movieName: this.cartData.selectedMovie,
+      showTimes: this.cartData.selectedTime,
+      seats: formattedSeats
+    };
+
+    console.log("Booking data:", bookingData);
+
+    this.http.post('http://localhost:5000/api/users/bookings_collection', bookingData).subscribe(
+      (response) => {
+        console.log('Booking saved successfully:', response);
+        this.cartData.selectedSeats = [];
+        this.loadBookingsForDate();
+      },
+      (error) => {
+        console.error('Error saving booking:', error);
+      }
+    );
+  }
+
+
+
+  cartData: {
+    userid: string,
+    username: string;
+    selectedMovie: string;
+    selectedTime: string;
+    selectedSeats: string[];
+  } = {
+      userid: '',
+      username: '',
+      selectedMovie: '',
+      selectedTime: '',
+      selectedSeats: []
+    };
+
+  cartItems: any[] = [];
+
+  updateSession(): void {
+    const sessionData = this.sessionService.getSession(); // Assuming your session service has a method to get the session data
+
+    if (sessionData) {
+      const selectedSeats = this.rows.flatMap((row, rowIndex) =>
+        row.map((seat, seatIndex) => (seat.selected ? { row: rowIndex + 1, seat: seatIndex + 1 } : null))
+      ).filter((seat) => seat !== null);
+
+      const updatedSessionData = {
+        sessionId: sessionData.sessionId,
+        userId: sessionData.userId,
+        username: sessionData.username,
+        selectedMovie: this.selectedMovie,
+        selectedTime: this.selectedTime,
+        selectedSeats: selectedSeats // Now it stores objects with row and seat
+      };
+
+      this.sessionService.setSession(updatedSessionData);
+
+      this.cartData = {
+        userid: updatedSessionData.userId,
+        username: updatedSessionData.username || '',
+        selectedMovie: updatedSessionData.selectedMovie,
+        selectedTime: updatedSessionData.selectedTime,
+        selectedSeats: selectedSeats.map(seat => `${seat.row}-${seat.seat}`), // Convert the seat objects back to a string format for the cartData
+      };
+
+      this.cartItems = [...selectedSeats.map(seat => `${seat.row}-${seat.seat}`)];
+      console.log("Session data after movie selection:", updatedSessionData);
+    } else {
+      console.error('No session data found. Please log in again.');
+    }
+  }
+
+  loadBookingsForDate(): void {
+    if (!this.selectedDay || !this.selectedMovie || !this.selectedTime) {
+      this.resetSeats();
+      return;
+    }
+
+    const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+    const sessionData = this.sessionService.getSession();
+    const loggedInUserId = sessionData ? sessionData.userId : null;
+
+    const url = `http://localhost:5000/api/users/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`;
+
+    this.http.get<any>(url).subscribe(
+      (response) => {
+        if (response && response.seats && response.seats.length > 0) {
+          const bookedSeats = response.seats;
+
+          bookedSeats.forEach((seat: { row: number; seat: number }) => {
+            const seatRowIndex = seat.row - 1; // Adjust for zero-indexing
+            const seatColumnIndex = seat.seat - 1; // Adjust for zero-indexing
+
+            this.rows[seatRowIndex][seatColumnIndex].booked = true;
+
+            if (loggedInUserId) {
+              // Check if the logged-in user owns the seat
+              const isOwnedByUser = response.userid === loggedInUserId;
+              this.rows[seatRowIndex][seatColumnIndex].ownedByUser = isOwnedByUser;
+
+              // Update the seatOwnershipMap for tracking
+              const seatKey = `${seat.row}-${seat.seat}`;
+              this.seatOwnershipMap[seatKey] = isOwnedByUser ? loggedInUserId : '';
+            } else {
+              // If no session data, default ownership to false
+              this.rows[seatRowIndex][seatColumnIndex].ownedByUser = false;
+            }
+          });
+        } else {
+          console.log('No bookings found for the selected date and movie.');
+        }
+      },
+      (error) => {
+        console.error('Error fetching bookings:', error);
+        this.resetSeats(); // Ensure seats are cleared on error
+      }
+    );
+  }
+
+
+
   toggleSeat(rowIndex: number, seatIndex: number): void {
     const seat = this.rows[rowIndex][seatIndex];
     if (!seat.booked) {
       seat.selected = !seat.selected;
-      this.bookedSeat = seat.selected
-        ? { row: rowIndex + 1, seat: seatIndex + 1, status: 'Selected' }
-        : null;
+      console.log(`Seat toggled: row=${rowIndex + 1}, seat=${seatIndex + 1}, selected=${seat.selected}`);
+
+      // Ensure seat format is 'row-seat'
+      const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
+      if (seat.selected) {
+        this.cartData.selectedSeats.push(seatKey);
+      } else {
+        const seatIndex = this.cartData.selectedSeats.indexOf(seatKey);
+        if (seatIndex !== -1) {
+          this.cartData.selectedSeats.splice(seatIndex, 1);
+        }
+      }
+
+      this.updateSession();
     }
   }
+
+
 
   getSeatNumber(rowIndex: number, seatIndex: number): number {
     let seatStart = 1;
@@ -203,50 +340,99 @@ export class SeatingComponent implements OnInit {
     return seatStart + seatIndex;
   }
 
-  saveBookings(): void {
-    if (!this.selectedDay || !this.selectedMovie || !this.selectedTime) return;
+  // confirmBooking(rowIndex: number, seatIndex: number): void {
+  //   const seat = this.rows[rowIndex][seatIndex];
+  //   if (seat.selected) {
+  //     seat.booked = true;
+  //     seat.selected = false;
+  //     this.saveBookings();
+  //   } else {
+  //     console.warn('Seat not selected for booking.');
+  //   }
+  // }
 
-    const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
-    const seats = this.rows.flatMap((row, rowIndex) =>
-      row
-        .map((seat, seatIndex) => (seat.booked ? { row: rowIndex + 1, seat: seatIndex + 1 } : null))
-        .filter((seat) => seat !== null)
-    );
 
-    const bookingData = {
-      date: formattedDate,
-      movieName: this.selectedMovie,
-      showTime: this.selectedTime,
-      seats,
-    };
-
-    this.http.post('http://localhost:5000/api/savebooking_collection', bookingData).subscribe(
-      (response) => {
-        console.log('Booking saved successfully:', response);
-
-        // Reload bookings to ensure UI consistency
-        this.loadBookingsForDate();
-      },
-      (error) => {
-        console.error('Error saving booking:', error);
-      }
-    );
-  }
-
-  confirmBooking(rowIndex: number, seatIndex: number): void {
-    const seat = this.rows[rowIndex][seatIndex];
-    if (seat.selected) {
-      seat.booked = true;
-      seat.selected = false;
-      this.saveBookings();
-    }
-  }
+  // console.log("Remove Booking data")
+  //     console.log("seat key:",seatKey)
+  //     console.log("seat:",seat)
+  //     console.log("UserId:",loggedInUserId)
+  //     console.log("Selected movie:",this.selectedMovie)
+  //     console.log("Selected movie:",this.selectedTime)
+  //     console.log("Seat Ownership Map:", this.seatOwnershipMap);
+  //     console.log("User owned:",this.seatOwnershipMap[seatKey] );
 
   removeBooking(rowIndex: number, seatIndex: number): void {
-    const seat = this.rows[rowIndex][seatIndex];
-    if (seat.booked) {
-      seat.booked = false;
-      this.saveBookings();
+    const sessionData = this.sessionService.getSession();
+    const loggedInUserId = sessionData.userId;
+    console.log("Booking Remove");
+    console.log("UserId:", loggedInUserId);
+
+    console.log("Selected movie:", this.selectedMovie);
+    console.log("Selected time:", this.selectedTime);
+    console.log("seat", rowIndex, seatIndex);
+
+    if (!this.selectedDay || !this.selectedMovie || !this.selectedTime || !loggedInUserId) {
+      console.error('Missing necessary information for booking removal.');
+      return;
     }
+
+    const formattedDate = `${this.selectedDay.year}-${this.selectedDay.month + 1}-${this.selectedDay.day}`;
+    const seatToRemove = `${rowIndex + 1}-${seatIndex + 1}`; // 'row-seat' format
+
+    // Get the current booking data
+    this.http.get<any>(`http://localhost:5000/api/users/bookings_collection/${formattedDate}/${this.selectedMovie}/${this.selectedTime}`)
+      .subscribe(
+        (response) => {
+          if (!response || !response.seats) {
+            console.error('No bookings found for the selected configuration.');
+            return;
+          }
+
+          console.log("Selected seating from DB:", response);
+          const bookingid = response._id;
+
+          console.log("userid in the booked seat:", response.userid);
+          console.log("userid in the session:", loggedInUserId);
+
+          // Check if the logged-in user is the one who made the booking
+          if (response.userid !== loggedInUserId) {
+            console.error('You cannot remove a booking that was not made by you.');
+            return;
+          }
+
+          // Send a request to the backend to remove the specific seat
+          this.http.put(`http://localhost:5000/api/users/booking/remove_seat/${bookingid}`, { seat: seatToRemove })
+            .subscribe(
+              () => {
+                console.log('Seat removed successfully.');
+
+                // Update the UI by marking the seat as available again
+                this.rows[rowIndex][seatIndex].booked = false;
+
+                // Optionally, reset the seat selection after removal
+                this.rows[rowIndex][seatIndex].selected = false;
+
+                // Reload the bookings after removal
+                this.loadBookingsForDate();
+              },
+              (error) => {
+                console.error('Error removing the seat:', error);
+              }
+            );
+        },
+        (error) => {
+          console.error('Error fetching booking:', error);
+        }
+      );
+  }
+
+
+
+
+
+  isSeatOwnedByUser(rowIndex: number, seatIndex: number): boolean {
+    const sessionData = this.sessionService.getSession();
+    const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
+    return this.seatOwnershipMap[seatKey] === sessionData.userId;
   }
 }

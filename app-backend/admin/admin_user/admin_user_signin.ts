@@ -7,6 +7,7 @@ const router = express.Router();
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
   try {
     const { adminUsername, adminPassword } = req.body;
+    console.log(adminUsername,adminPassword )
 
     // Input Validation
     if (!adminUsername || !adminPassword) {

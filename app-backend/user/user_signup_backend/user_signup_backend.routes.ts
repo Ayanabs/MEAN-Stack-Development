@@ -26,11 +26,9 @@ router.post('/signup', async (req: Request, res: Response): Promise<void> => {
     const savedUser = await newUser.save() as unknown as IUser & { _id: string };
     await newUser.save();
 
-     // Create a session for the user
-     req.session.user = { id: savedUser._id.toString(), username: savedUser.username };
 
-      // Log session details for debugging
-    console.log(`User signed up. Session ID: ${req.session.id}, User ID: ${newUser._id} Username:${newUser.username}`);
+
+
 
     res.status(201).json({ message: 'User signed up successfully',
        user: { username, email },

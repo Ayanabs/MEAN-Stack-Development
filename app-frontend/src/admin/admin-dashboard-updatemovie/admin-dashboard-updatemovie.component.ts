@@ -1,17 +1,19 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, NgModule, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, NgModule, Output, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard-updatemovie',
   standalone:true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule,CommonModule,NgIf],
   templateUrl: './admin-dashboard-updatemovie.component.html',
   styleUrl: './admin-dashboard-updatemovie.component.css'
 })
 export class AdminDashboardUpdatemovieComponent {
+
+  @ViewChild('movieUpdateForm') movieUpdateForm!: NgForm;
 
   currentYear = new Date().getFullYear(); // Max year for releaseYear validation
   @Input() movie: any = [];
@@ -38,6 +40,7 @@ export class AdminDashboardUpdatemovieComponent {
     next: (data) => {
       this.movie = { ...data,
         nowScreening: data.nowScreening ? 'Yes' : 'No',
+        showTimes: data.showTimes || [],
       }; 
       console.log('Fetched movie data:', JSON.stringify(this.movie, null, 2));
     },
@@ -59,22 +62,45 @@ export class AdminDashboardUpdatemovieComponent {
     }
   }
 
+    // Add a new time slot
+    addshowTimes() {
+      this.movie.showTimes.push(''); // Add an empty time slot
+    }
+  
+    // Remove a time slot
+    removeshowTimes(index: number) {
+      this.movie.showTimes.splice(index, 1);
+    }
+  
   // Submit updated movie data to the backend
   onSubmit() {
+    if (this.movieUpdateForm.invalid || this.movie.showTimes.length === 0) {
+      // Mark all fields as touched to show validation errors
+      this.movieUpdateForm.form.markAllAsTouched();
+      alert('Please fill in all required fields before submitting.');
+      return; // Prevent form submission
+    }
     const UpdateFormData = new FormData();
     UpdateFormData.append('movieName', this.movie.movieName);
     UpdateFormData.append('category', this.movie.category);
     UpdateFormData.append('releaseYear', this.movie.releaseYear);
-    UpdateFormData.append('additionalInfo', this.movie.additionalInfo || '');
-    UpdateFormData.append('cast', this.movie.cast || '');
-    UpdateFormData.append('trailerLink', this.movie.trailerLink || '');
+    UpdateFormData.append('additionalInfo', this.movie.additionalInfo);
+    UpdateFormData.append('cast', this.movie.cast);
+    UpdateFormData.append('trailerLink', this.movie.trailerLink);
     UpdateFormData.append('watchTime', this.movie.watchTime?.toString() ?? '');
     UpdateFormData.append('director', this.movie.director || '');
     UpdateFormData.append('nowScreening',  this.movie.nowScreening === 'Yes' ? 'true' : 'false' );
+
+     // Append time slots
+     this.movie.showTimes.forEach((slot: string | Blob, index: any) =>
+      UpdateFormData.append(`showTimes[${index}]`, slot)
+    );
+    
     if (this.movie.picture) {
       UpdateFormData.append('picture', this.movie.picture);
     }
-    console.log('Update movie ID:',this.movieId)
+    console.log('Update movie ID:',this.movieId);
+    
     console.log(UpdateFormData)
 
     // Send the updated data to the backend

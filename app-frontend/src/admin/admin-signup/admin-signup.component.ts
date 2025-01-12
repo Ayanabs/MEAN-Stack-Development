@@ -2,6 +2,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm, NgModel } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-signup',
@@ -20,7 +21,7 @@ export class AdminSignupComponent {
   };
   errorMessage: string = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   
   validateAdminUsername(adminusername: string): boolean {
@@ -75,7 +76,7 @@ export class AdminSignupComponent {
     this.http.post('http://localhost:5000/api/admin/signup', AdminsignupData).subscribe(
       (response: any) => {
         console.log('Admin signed up successfully:', response);
-        
+        this.router.navigate(['/adminsignin']);
         
       },
       (error: any) => {

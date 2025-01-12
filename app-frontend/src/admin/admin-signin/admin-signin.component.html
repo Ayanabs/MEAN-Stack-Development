@@ -22,7 +22,7 @@
         />
       </div>
       <button type="submit" [disabled]="!adminloginForm.valid">Submit</button>
-      
+      <button type="button" (click)="signup()">Sign Up</button>
 
       <div *ngIf="errorMessage" class="error-message">
         <p>{{ errorMessage }}</p>

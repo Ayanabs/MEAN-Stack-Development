@@ -1,12 +1,22 @@
 {
   "dependencies": {
     "connect-mongo": "^5.1.0",
+    "cors": "^2.8.5",
     "express-session": "^1.18.1",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.8.4",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@types/express-session": "^1.18.1",
     "@types/multer": "^1.4.12",
     "@types/ws": "^8.5.13"
+  },
+  "scripts": {
+    "build": "ng build --configuration=production"
   }
 }

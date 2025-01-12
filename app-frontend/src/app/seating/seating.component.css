@@ -293,3 +293,27 @@ body {
   border-radius: 10px;
   transition: transform 0.3s ease;
 }
+.cart-container {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.cart-container h3 {
+  margin-bottom: 15px;
+}
+.cart-container p {
+  margin: 5px 0;
+}
+.confirm-btn {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.confirm-btn:hover {
+  background-color: #218838;
+}
