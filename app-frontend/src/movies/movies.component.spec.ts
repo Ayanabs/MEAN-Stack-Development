@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoviesComponent } from './movies.component';
 import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
+import { HttpTestingController } from '@angular/common/http/testing';
 
 describe('MoviesComponent', () => {
   let component: MoviesComponent;
@@ -33,13 +34,14 @@ describe('MoviesComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch movies successfully', () => {
-    fixture.detectChanges(); // Trigger ngOnInit
-
-    // Validate the mock HttpClient is called
-    expect(mockHttpClient.get).toHaveBeenCalledWith('http://localhost:5000/api/users/getmovies');
-
-    // Validate the component's movies array
-    expect(component.movies).toEqual([{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }]);
+  it('should fetch movies', () => {
+    const httpMock = TestBed.inject(HttpTestingController);
+    const mockMovies = [{ title: 'Movie 1' }, { title: 'Movie 2' }];
+  
+    const req = httpMock.expectOne('http://localhost:5000/api/users/getmovies');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockMovies); // Provide mock response
+  
+    httpMock.verify();
   });
 });

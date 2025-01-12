@@ -1,12 +1,31 @@
 import { TestBed } from '@angular/core/testing';
 import { SeatingComponent } from '../seating/seating.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 //import { describe, beforeEach, it } from 'node:test';
+const mockData = [
+  { id: 1, name: 'Movie 1' },
+  { id: 2, name: 'Movie 2' },
+];
+
+const mockService = {
+  fetchData: jasmine.createSpy('fetchData').and.returnValue(of(mockData)),
+};
 
 describe('SeatingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SeatingComponent], // Use `declarations` for components
+      imports: [SeatingComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap: of({ get: (key: string) => '123' }), // Mock route parameters
+          },
+        },
+      ],
     }).compileComponents();
   });
 
