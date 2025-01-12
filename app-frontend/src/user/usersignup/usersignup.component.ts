@@ -46,52 +46,54 @@ export class UsersignupComponent {
       return emailPattern.test(email);
     }
 
-  onSubmit(): void {
+    onSubmit(): void {
 
-     // Reset error message on each submit
-     this.errorMessage = '';
-
-     // Validate username, password, and email before submitting
-     if (!this.validateUsername(this.user.clientusername)) {
-       this.errorMessage = 'Username must consist of letters, numbers, and underscores only, with no spaces or special characters.';
-       return;
-     }
- 
-     if (!this.validatePassword(this.user.clientpassword)) {
-       this.errorMessage = 'Password must be at least 5 characters long and cannot contain spaces.';
-       return;
-     }
- 
-     if (!this.validateEmail(this.user.clientemail)) {
-       this.errorMessage = 'Please enter a valid email address.';
-       return;
-     }
-
-    console.log('Form Submitted');
-    console.log('Username:', this.user.clientusername);
-    console.log('Password:', this.user.clientpassword);
-    console.log('Email:', this.user.clientemail);
-  
-    // Pass the data to the backend through the service
-    const signupData = {
-      username: this.user.clientusername,
-      password: this.user.clientpassword,
-      email: this.user.clientemail,
-    };
-  
-    this.http.post('http://localhost:5000/api/users/signup', signupData).subscribe(
-      (response: any) => {
-        console.log('User signed up successfully:', response);
-        alert("Signup successful! Welcome ${this.user.clientusername} to the CineBooking.")
-       
-        this.router.navigate(['/userlogin']);
-      },
-      (error: any) => {
-        console.error('Error signing up user:', error);
-        this.errorMessage = 'There was an error while signing up. Please try again later.';
+      // Reset error message on each submit
+      this.errorMessage = '';
+    
+      // Validate username, password, and email before submitting
+      if (!this.validateUsername(this.user.clientusername)) {
+        this.errorMessage = 'Username must consist of letters, numbers, and underscores only, with no spaces or special characters.';
+        return;
       }
-    );
+    
+      if (!this.validatePassword(this.user.clientpassword)) {
+        this.errorMessage = 'Password must be at least 5 characters long and cannot contain spaces.';
+        return;
+      }
+    
+      if (!this.validateEmail(this.user.clientemail)) {
+        this.errorMessage = 'Please enter a valid email address.';
+        return;
+      }
+    
+      console.log('Form Submitted');
+      console.log('Username:', this.user.clientusername);
+      console.log('Password:', this.user.clientpassword);
+      console.log('Email:', this.user.clientemail);
+    
+      // Pass the data to the backend through the service
+      const signupData = {
+        username: this.user.clientusername,
+        password: this.user.clientpassword,
+        email: this.user.clientemail,
+      };
+    
+      this.http.post('http://localhost:5000/api/users/signup', signupData).subscribe(
+        (response: any) => {
+          console.log('User signed up successfully:', response);
+          // Corrected the alert message with proper template literal
+          alert(`Signup successful! Welcome ${this.user.clientusername} to the ReelFusion.`);
+    
+          this.router.navigate(['/userlogin']);
+        },
+        (error: any) => {
+          console.error('Error signing up user:', error);
+          this.errorMessage = 'There was an error while signing up. Please try again later.';
+        }
+      );
     }
+    
     
     resetSignUpForm(){
       this.user.clientusername='';

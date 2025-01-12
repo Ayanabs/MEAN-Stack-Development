@@ -1,11 +1,12 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-singlemovie',
-  imports: [CommonModule,NgIf],
+  imports: [CommonModule,NgIf,RouterLink],
   templateUrl: './singlemovie.component.html',
   styleUrl: './singlemovie.component.css'
 })
@@ -20,12 +21,14 @@ export class SinglemovieComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
-    // Get the movie ID from the route parameter
-    this.movieId = this.route.snapshot.paramMap.get('id')!;
-    console.log(this.movieId)
-    if (this.movieId) {
-      this.fetchMovieDetails();
-    }
+    // Subscribe to route parameter changes
+    this.route.paramMap.subscribe((params) => {
+      const newMovieId = params.get('id')!;
+      if (newMovieId && newMovieId !== this.movieId) {
+        this.movieId = newMovieId;
+        this.fetchMovieDetails(); // Fetch details for the new movie ID
+      }
+    });
   }
 
   // Fetch movie details by ID

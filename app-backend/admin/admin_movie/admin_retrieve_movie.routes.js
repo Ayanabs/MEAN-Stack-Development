@@ -14,24 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const movie_model_1 = require("./movie_model");
-const path_1 = __importDefault(require("path"));
 const router = express_1.default.Router();
+const app = (0, express_1.default)();
+const path = require('path');
+app.use((req, res, next) => {
+    console.log(`Request URL: ${req.url}`);
+    next();
+});
+// Route to retrieve all movies from the database
 router.get('/getmovies', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Fetching movies...');
     try {
-        // Retrieve all movies from the database
+        // Retrieve movies from the database
         const movies = yield movie_model_1.Movie.find();
-        // Check if there are movies in the database
-        if (movies.length === 0) {
-            res.status(404).json({ message: 'No movies found in the database' });
-            return;
-        }
-        // Determine the default image URL from the first movie
-        const defaultImage = `http://localhost:5000/uploads/${path_1.default.basename(movies[0].picture)}`;
         // Map through the movies to include the full URL for the picture
-        const retrievedMovies = movies.map(movie => (Object.assign(Object.assign({}, movie.toObject()), { picture: movie.picture
-                ? `http://localhost:5000/uploads/${path_1.default.basename(movie.picture)}`
-                : defaultImage })));
+        const retrievedMovies = movies.map(movie => (Object.assign(Object.assign({}, movie.toObject()), { picture: `http://localhost:5000/uploads/${path.basename(movie.picture)}` })));
         console.log('Movies retrieved:', retrievedMovies);
         // Send the retrieved movies as JSON response
         res.status(200).json(retrievedMovies);

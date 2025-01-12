@@ -26,7 +26,7 @@ export class MoviesComponent {
 
     this.http.get<any[]>(retrieveMovieUrl).subscribe(
       (data) => {
-        console.log('Movies:', data);
+        // console.log('Movies:', data);
         this.movies = data;
       },
       (error) => {

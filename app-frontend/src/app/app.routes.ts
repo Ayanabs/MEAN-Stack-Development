@@ -9,23 +9,24 @@ import { MoviesComponent } from '../movies/movies.component';
 import { AdminMovieComponent } from '../admin/admin-movie/admin-movie.component';
 import { AdminDashboardComponent } from '../admin/admin-dashboard/admin-dashboard.component';
 import { AdminDashboardMovieComponent } from '../admin/admin-dashboard-movie/admin-dashboard-movie.component';
-
-import { PaypalButtonComponent } from './paypal-button/paypal-button.component';
+import { AuthGuard } from '../guards/auth.gaurds';
+import { AdminSigninComponent } from '../admin/admin-signin/admin-signin.component';
+import { AdminSignupComponent } from '../admin/admin-signup/admin-signup.component';
 import { PaymentComponent } from './payment/payment.component';
 
 
-
 export const routes: Routes = [
-    { path: '', component: MoviesComponent }, // Default route
-    { path: 'userlogin', component: UserloginComponent },
+    { path: '', component: AdminDashboardMovieComponent}, // Default route
+    { path: 'adminsignin', component: AdminSigninComponent },
+    { path: 'adminsignup', component: AdminSignupComponent },
+    { path: 'userlogin', component: UserloginComponent,canActivate: [AuthGuard]  },
     { path: 'usersignup', component: UsersignupComponent },
-    { path: 'usersignup', component: UsersignupComponent },
+    { path: 'movies', component: MoviesComponent},
     { path: 'singlemovie/:id', component: SinglemovieComponent},
     { path: 'seating', component: SeatingComponent},
-    {path:'movies',component:MoviesComponent},
-    { path: 'paypalbtn', component: PaypalButtonComponent },
-    {path:'payment',component:PaymentComponent},
-
+    { path: 'admin-dashboard', component: AdminDashboardComponent},
+    { path: 'admin-moviedashboard', component: AdminDashboardMovieComponent},
+    {path: 'payment', component: PaymentComponent}
 ];
 
 

@@ -2,6 +2,8 @@ import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient,HttpClientModule  } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { SessionService } from '../../services/session.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-userlogin',
@@ -17,9 +19,17 @@ export class UserloginComponent {
   @Input() isVisible: boolean = false;
   @Output() closeModal = new EventEmitter<void>();
   @Output() loginSuccess = new EventEmitter<void>();
+  returnUrl: string = '/';
+  constructor(private http: HttpClient, private sessionService: SessionService, private route: ActivatedRoute,private router: Router,) {}
 
-  constructor(private http: HttpClient) {}
 
+  ngOnInit() {
+    // Capture the current route from the query parameter
+    this.route.queryParams.subscribe((params) => {
+      this.returnUrl = params['returnUrl'] || '/';
+      console.log("current URL: ",this.returnUrl)
+    });
+  }
   // Function to close the modal
   close() {
     this.isVisible = false;
@@ -59,19 +69,41 @@ export class UserloginComponent {
       username: this.clientusername,
       password: this.clientpassword,
     };
-    console.log('Login data:', loginData);
+    // console.log('Login data:', loginData);
 
-    this.http.post('http://localhost:5000/api/users/login', loginData)
-      .subscribe({
-        next: (response) =>{
-          console.log('Login successful', response);
-          // Show success alert with the user's username
-          alert(`Login successful! Welcome back ${this.clientusername}.`);
-          this.loginSuccess.emit(); // Emit login success event
-          // Optionally close the modal if login is within a modal
-          this.resetForm();
-          this.close();
-        },
+    this.http.post<{  sessionId: string; userId: string; username: string }>(
+      'http://localhost:5000/api/users/login',
+      loginData
+    )
+    .subscribe({
+      next: (response) => {
+        console.log('Login successful', response);
+
+        // Store session details globally
+        if (response.sessionId && response.userId && response.username) {
+          const sessionData = {
+            sessionId: response.sessionId,
+            userId: response.userId,
+            username: response.username,
+            selectedMovie: '',  // Default value
+            selectedTime: '',   // Default value
+            selectedSeats: []   // Default value
+          };
+          this.sessionService.setSession(sessionData);
+        } else {
+          console.error('Invalid login response. Missing session data.');
+        }
+        console.log("Session Data:",this.sessionService.getSession())
+
+        // Show success alert with the user's username
+        alert(`Login successful! Welcome back, ${this.clientusername}.`);
+        this.loginSuccess.emit(); // Emit login success event
+       
+        // Optionally close the modal if login is within a modal
+        this.resetForm();
+        this.close();
+        this.router.navigateByUrl(this.returnUrl);
+      },
         error: (error: any) => {
           console.error('Login failed', error);
           this.errorMessage = 'Login failed. Please check your username and password and try again.';

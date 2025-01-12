@@ -16,10 +16,11 @@ const express_1 = __importDefault(require("express"));
 const models_1 = __importDefault(require("./models"));
 const router = express_1.default.Router();
 // Get bookings for a specific date, movie, and time
-router.get('/:date/:movie/:time', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.get('/bookings_collection/:date/:movie/:time', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { date, movie, time } = req.params;
+    console.log("get booking file accessed:", req.params);
     try {
-        const booking = yield models_1.default.findOne({ date, movieName: movie, showTime: time });
+        const booking = yield models_1.default.findOne({ date, movieName: movie, showTimes: time });
         if (booking) {
             res.status(200).json(booking);
         }
@@ -31,8 +32,4 @@ router.get('/:date/:movie/:time', (req, res) => __awaiter(void 0, void 0, void 0
         res.status(500).json({ message: 'Error fetching bookings', error: error.message });
     }
 }));
-// 404 handler for undefined routes
-router.use((req, res) => {
-    res.status(404).json({ message: 'API route not found' });
-});
 exports.default = router;
