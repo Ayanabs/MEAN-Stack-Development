@@ -21,7 +21,8 @@ describe('SinglemovieComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule,SinglemovieComponent], // Correct the import structure
+      imports: [HttpClientTestingModule], // Correct the import structure
+      declarations: [SinglemovieComponent],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteMock },  // Provide the mock ActivatedRoute
       ],
@@ -40,10 +41,10 @@ describe('SinglemovieComponent', () => {
   it('should fetch movie details for ID', () => {
     // Mock the HTTP response
     const mockResponse = { title: 'Test Movie', id: '123', watchTime: 120 };
-    
-    // Ensure ngOnInit() is triggered and HTTP request is made automatically
-    fixture.detectChanges();  // Trigger change detection and ngOnInit
 
+    fixture.detectChanges();  // Trigger ngOnInit() automatically
+
+    // Expect the HTTP request for the movie details
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmoviebyid/123');
     expect(req.request.method).toBe('GET');
     req.flush(mockResponse);  // Return mock data
@@ -53,10 +54,12 @@ describe('SinglemovieComponent', () => {
     // Check if movie details were set correctly
     expect(component.movieData).toEqual(mockResponse);
     expect(component.movieId).toBe('123');
+
+    // Ensure there are no outstanding HTTP requests
+    httpMock.verify();
   });
 
   it('should handle error if movie details fail to load', () => {
-    // Ensure ngOnInit() is triggered and HTTP request is made automatically
     fixture.detectChanges();  // Trigger ngOnInit() automatically
 
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmoviebyid/123');
@@ -67,9 +70,13 @@ describe('SinglemovieComponent', () => {
 
     // Check if error message was set
     expect(component.errorMessage).toBe('Failed to load movie details. Please try again.');
+
+    // Ensure there are no outstanding HTTP requests
+    httpMock.verify();
   });
 
   afterEach(() => {
-    httpMock.verify();  // Verify that no outstanding requests are left
+    // Verify there are no outstanding HTTP requests after each test
+    httpMock.verify();
   });
 });
