@@ -102,9 +102,11 @@ export class UsersignupComponent {
     }
 
 
+
     close() {
       this.closeModal.emit(); // Notify parent to hide the modal
       this.resetSignUpForm();
     }
+
   
 }

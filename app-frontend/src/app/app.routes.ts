@@ -12,7 +12,9 @@ import { AdminDashboardMovieComponent } from '../admin/admin-dashboard-movie/adm
 import { AuthGuard } from '../guards/auth.gaurds';
 import { AdminSigninComponent } from '../admin/admin-signin/admin-signin.component';
 import { AdminSignupComponent } from '../admin/admin-signup/admin-signup.component';
+
 import { PaymentComponent } from './payment/payment.component';
+
 
 
 export const routes: Routes = [
@@ -26,7 +28,9 @@ export const routes: Routes = [
     { path: 'seating', component: SeatingComponent},
     { path: 'admin-dashboard', component: AdminDashboardComponent},
     { path: 'admin-moviedashboard', component: AdminDashboardMovieComponent},
+
     {path: 'payment', component: PaymentComponent}
+
 ];
 
 

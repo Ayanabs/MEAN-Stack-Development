@@ -5,7 +5,9 @@ import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http'
 import { ChangeDetectorRef } from '@angular/core';
 import { safeLocalStorage } from '../utils/local-storage.util'; // Update the path as needed
 import { SessionService } from '../../services/session.service';
+
 import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -46,7 +48,9 @@ export class SeatingComponent implements OnInit {
   bookedSeat: { row: number; seat: number; status: string } | null = null;
   loggedInUserId: string | null = null;
 
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService,private router: Router) { }
+
 
   ngOnInit(): void {
     const sessionData = this.sessionService.getSession();
@@ -457,9 +461,9 @@ export class SeatingComponent implements OnInit {
   bookSeat(): void {
     this.totalBookedSeats += 1; // Increment seat count
     this.bookedSeatsChange.emit(this.totalBookedSeats); // Emit the updated seat count
+
   }
   
-
 
 
    // Method to redirect to the PaymentComponent
