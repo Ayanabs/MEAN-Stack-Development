@@ -66,11 +66,19 @@ jobs:
          # Install Docker Compose
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
-        
+
+         # Verify Dockerfile existence for frontend
+      - name: Verify Frontend Dockerfile
+        run: test -f ./app-frontend/Dockerfile || (echo "Dockerfile not found in app-frontend" && exit 1)
+      
    # Build Docker images
       - name: Build Frontend Docker Image
         run: docker build -t mean-stack-frontend ./app-frontend
 
+  # Verify Dockerfile existence for backend
+      - name: Verify Backend Dockerfile
+        run: test -f ./app-backend/Dockerfile || (echo "Dockerfile not found in app-backend" && exit 1)
+        
       - name: Build Backend Docker Image
         run: docker build -t mean-stack-backend ./app-backend
 
