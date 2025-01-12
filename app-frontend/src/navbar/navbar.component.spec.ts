@@ -20,8 +20,7 @@ describe('NavbarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule,NavbarComponent],
-     
+      imports: [HttpClientTestingModule, NavbarComponent],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteMock },  // Provide mock ActivatedRoute
       ],
@@ -31,21 +30,25 @@ describe('NavbarComponent', () => {
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
 
-    fixture.detectChanges(); // Trigger change detection
+    fixture.detectChanges(); // Trigger initial change detection
   });
 
   it('should fetch movies', () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
 
-    component.searchQuery = 'Movie';  // Set the search query
-    component.onSearch();  // Call the search method
-
-    fixture.detectChanges();  // Trigger change detection to ensure the request is made
+    // Set the search query and manually call onSearch method
+    component.searchQuery = 'Movie';
+    
+    // Trigger the search method which makes the HTTP request
+    component.onSearch(); // Calling onSearch directly in test
+    fixture.detectChanges();  // Ensure change detection triggers the HTTP request
 
     // Expect the HTTP request for the searchMovies API
-    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?name=Movie');
+    const req = httpMock.expectOne(
+      'http://localhost:5000/api/users/searchmovies?name=Movie'
+    );
     expect(req.request.method).toBe('GET');
-    req.flush(mockMovies);  // Mock the response with movie data
+    req.flush(mockMovies); // Mock the response with movie data
 
     // Ensure that the filteredMovies are set correctly
     expect(component.filteredMovies.length).toBe(2);
@@ -56,5 +59,7 @@ describe('NavbarComponent', () => {
     httpMock.verify();
   });
 
-  
+  afterEach(() => {
+    httpMock.verify();  // Verify that there are no pending HTTP requests
+  });
 });
