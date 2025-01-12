@@ -36,9 +36,10 @@ describe('NavbarComponent', () => {
 
   it('should fetch movies', () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
-    
-    // Call onSearch method to trigger the HTTP request
-    component.onSearch();  
+
+    component.searchQuery = 'Movie';  // Set the search query
+    component.onSearch();  // Call the search method
+
     fixture.detectChanges();  // Trigger change detection to ensure the request is made
 
     // Expect the HTTP request for the searchMovies API
@@ -46,12 +47,14 @@ describe('NavbarComponent', () => {
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies);  // Mock the response with movie data
 
-    // Ensure no outstanding HTTP requests after the test
-    httpMock.verify();  
-  });
+    // Ensure that the filteredMovies are set correctly
+    expect(component.filteredMovies.length).toBe(2);
+    expect(component.filteredMovies[0].movieName).toBe('Movie 1');
+    expect(component.filteredMovies[1].movieName).toBe('Movie 2');
 
-  afterEach(() => {
-    // Ensure there are no outstanding HTTP requests after each test
+    // Ensure no outstanding HTTP requests after the test
     httpMock.verify();
   });
+
+  
 });

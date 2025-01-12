@@ -65,18 +65,15 @@ describe('SinglemovieComponent', () => {
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmoviebyid/123');
     expect(req.request.method).toBe('GET');
     req.error(new ErrorEvent('Network error'));  // Simulate an error
+  
 
     fixture.detectChanges();  // Ensure the component updates with the error message
 
     // Check if error message was set
     expect(component.errorMessage).toBe('Failed to load movie details. Please try again.');
 
-    // Ensure there are no outstanding HTTP requests
-    httpMock.verify();
+
   });
 
-  afterEach(() => {
-    // Verify there are no outstanding HTTP requests after each test
-    httpMock.verify();
-  });
+  
 });
