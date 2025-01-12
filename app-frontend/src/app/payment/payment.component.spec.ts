@@ -1,26 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing'; // Add this import
-import { ActivatedRoute } from '@angular/router'; // Import ActivatedRoute for mocking
-import { PaymentComponent } from './payment.component';
+import { PaypalButtonComponent } from '../paypal-button/paypal-button.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs'; // Observable to mock
 
-describe('PaymentComponent', () => {
-  let component: PaymentComponent;
-  let fixture: ComponentFixture<PaymentComponent>;
+describe('PaypalButtonComponent', () => {
+  let component: PaypalButtonComponent;
+  let fixture: ComponentFixture<PaypalButtonComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [], // Declare the component, not import
-      imports: [RouterTestingModule,PaymentComponent],  // Add RouterTestingModule
+      declarations: [PaypalButtonComponent],
       providers: [
-        { 
-          provide: ActivatedRoute, 
-          useValue: { snapshot: { params: { id: '123' } } } // Mock ActivatedRoute
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({ id: '123' })  // Mocking the observable for route params
+          }
         }
       ]
-    })
-    .compileComponents();
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(PaymentComponent);
+    fixture = TestBed.createComponent(PaypalButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
