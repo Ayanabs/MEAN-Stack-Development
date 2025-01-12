@@ -8,6 +8,8 @@ npm-debug.log
 *.tmp
 *.swp
 
+
+
 # Ignore OS-specific files
 .DS_Store
 Thumbs.db
