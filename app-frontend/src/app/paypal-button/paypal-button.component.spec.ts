@@ -9,8 +9,8 @@ describe('PaypalButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PaypalButtonComponent],  // Declare the component
-      imports: [RouterTestingModule],  // Add RouterTestingModule if using routing
+      declarations: [],  // Declare the component
+      imports: [RouterTestingModule,PaypalButtonComponent],  // Add RouterTestingModule if using routing
       providers: [
         { 
           provide: ActivatedRoute, 

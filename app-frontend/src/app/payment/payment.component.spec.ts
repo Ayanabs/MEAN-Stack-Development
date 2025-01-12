@@ -9,8 +9,8 @@ describe('PaymentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PaymentComponent], // Declare the component, not import
-      imports: [RouterTestingModule],  // Add RouterTestingModule
+      declarations: [], // Declare the component, not import
+      imports: [RouterTestingModule,PaymentComponent],  // Add RouterTestingModule
       providers: [
         { 
           provide: ActivatedRoute, 
