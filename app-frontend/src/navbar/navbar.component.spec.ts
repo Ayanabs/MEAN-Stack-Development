@@ -4,27 +4,26 @@ import { NavbarComponent } from './navbar.component';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
-  let httpTestingController: HttpTestingController;
+  let httpMock: HttpTestingController;  
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule],  
       declarations: [NavbarComponent],
     });
 
     component = TestBed.createComponent(NavbarComponent).componentInstance;
-    httpTestingController = TestBed.inject(HttpTestingController);
-  });
+    httpMock = TestBed.inject(HttpTestingController);  
 
   it('should fetch movies', () => {
     const mockMovies = [{ movieName: 'Movie 1' }, { movieName: 'Movie 2' }];
     
     component.onSearch();  // Trigger the search method
 
-    const req = httpTestingController.expectOne('http://localhost:5000/api/users/searchmovies?name=Movie');
+    const req = httpMock.expectOne('http://localhost:5000/api/users/searchmovies?name=Movie');
     expect(req.request.method).toBe('GET');
     req.flush(mockMovies);  // Mock the response with movie data
 
-    httpTestingController.verify();  // Ensure there are no outstanding HTTP requests
+    httpMock.verify();  // Ensure there are no outstanding HTTP requests
   });
 });
