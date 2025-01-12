@@ -9,7 +9,8 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - MONGO_URI=mongodb://mongo:27017/full_stack_db
+      - MONGO_URI=mongodb+srv://neethilakumararatne17:8qm1p5RYVH3fNtPz@mongocluster.gkwkw.mongodb.net/mydatabase?retryWrites=true&w=majority
+
     depends_on:
       - mongo
     networks:
