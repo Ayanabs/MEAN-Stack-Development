@@ -1,9 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 import { PaymentComponent } from './payment.component';
 import { PaypalButtonComponent } from '../paypal-button/paypal-button.component';
-import { of } from 'rxjs';
+
+// Create a mock for the PaypalButtonComponent
+class MockPaypalButtonComponent {
+  someObservable = of({}); // Mock observable to avoid subscription issues
+}
 
 describe('PaymentComponent', () => {
   let component: PaymentComponent;
@@ -13,29 +18,23 @@ describe('PaymentComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        PaymentComponent, // Standalone component
+        PaymentComponent, // Ensure PaymentComponent is standalone
       ],
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: { params: of({ id: '123' }) }, // Mock route params
+          useValue: { params: of({ id: '123' }) }, // Mock ActivatedRoute
         },
-        // Add any service mocks if needed for PaypalButtonComponent
+        // Mock PaypalButtonComponent if needed
+        {
+          provide: PaypalButtonComponent,
+          useClass: MockPaypalButtonComponent,
+        },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentComponent);
     component = fixture.componentInstance;
-
-    // Mock child component if necessary
-    const paypalButtonElement = fixture.debugElement.children.find(
-      el => el.componentInstance instanceof PaypalButtonComponent
-    );
-    if (paypalButtonElement) {
-      const paypalButtonInstance = paypalButtonElement.componentInstance;
-      paypalButtonInstance.someObservable = of({}); // Mock the observable
-    }
-
     fixture.detectChanges();
   });
 
