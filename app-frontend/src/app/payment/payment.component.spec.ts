@@ -18,13 +18,24 @@ describe('PaymentComponent', () => {
       providers: [
         {
           provide: ActivatedRoute,
-          useValue: { params: of({ id: '123' }) }, // Mock params
+          useValue: { params: of({ id: '123' }) }, // Mock route params
         },
+        // Add any service mocks if needed for PaypalButtonComponent
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentComponent);
     component = fixture.componentInstance;
+
+    // Mock child component if necessary
+    const paypalButtonElement = fixture.debugElement.children.find(
+      el => el.componentInstance instanceof PaypalButtonComponent
+    );
+    if (paypalButtonElement) {
+      const paypalButtonInstance = paypalButtonElement.componentInstance;
+      paypalButtonInstance.someObservable = of({}); // Mock the observable
+    }
+
     fixture.detectChanges();
   });
 
