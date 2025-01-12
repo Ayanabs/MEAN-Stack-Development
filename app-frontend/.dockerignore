@@ -4,10 +4,6 @@ node_modules
 # Ignore npm debug logs
 npm-debug.log
 
-# Ignore Docker-related files
-Dockerfile
-.dockerignore
-
 # Ignore temporary files and directories
 *.log
 *.tmp
