@@ -9,10 +9,11 @@ describe('PaypalButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PaypalButtonComponent],
+      declarations: [],  // Declare the component under test
+      imports: [PaypalButtonComponent],  // Import the standalone component directly here
       providers: [
         {
-          provide: ActivatedRoute,
+          provide: ActivatedRoute,  // Mock the ActivatedRoute dependency
           useValue: {
             params: of({ id: '123' })  // Mocking the observable for route params
           }
@@ -20,12 +21,12 @@ describe('PaypalButtonComponent', () => {
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(PaypalButtonComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    fixture = TestBed.createComponent(PaypalButtonComponent);  // Create the component instance
+    component = fixture.componentInstance;  // Get the component instance
+    fixture.detectChanges();  // Trigger change detection to update the view
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(component).toBeTruthy();  // Test if component is created successfully
   });
 });

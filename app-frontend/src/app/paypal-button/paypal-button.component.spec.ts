@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { ActivatedRoute } from '@angular/router';
 import { PaypalButtonComponent } from './paypal-button.component';
-import { of } from 'rxjs';  // Import 'of' to mock observables
+import { ActivatedRoute } from '@angular/router'; // Assuming the component uses ActivatedRoute
+import { of } from 'rxjs';
 
 describe('PaypalButtonComponent', () => {
   let component: PaypalButtonComponent;
@@ -10,14 +9,12 @@ describe('PaypalButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PaypalButtonComponent],
-      imports: [RouterTestingModule],
+      imports: [PaypalButtonComponent], // Import the standalone component directly here
       providers: [
-        { 
-          provide: ActivatedRoute, 
+        {
+          provide: ActivatedRoute,
           useValue: {
-            snapshot: { params: { id: '456' } },  // Mock route params if needed
-            queryParams: of({ amount: 100 })  // Mock query params observable if used
+            params: of({ id: '123' })  // Mock ActivatedRoute if the component uses it
           }
         }
       ]
