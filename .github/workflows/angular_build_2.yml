@@ -67,6 +67,10 @@ jobs:
       - name: Install Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
+      - name: Debug:List files in app-frontend
+        run: ls -l ./app-frontend
+
+
          # Verify Dockerfile existence for frontend
       - name: Verify Frontend Dockerfile
         run: test -f ./app-frontend/Dockerfile || (echo "Dockerfile not found in app-frontend" && exit 1)
