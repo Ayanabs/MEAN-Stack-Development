@@ -82,9 +82,9 @@ export class UsersignupComponent {
     this.http.post('http://localhost:5000/api/users/signup', signupData).subscribe(
       (response: any) => {
         console.log('User signed up successfully:', response);
-        alert("Signup successful! Welcome ${username} to the CineBooking.")
+        alert(`Signup successful! Welcome ${signupData.username} to the CineBooking.`)
        
-        this.router.navigate(['/userlogin']);
+        this.closeModal.emit();
       },
       (error: any) => {
         console.error('Error signing up user:', error);

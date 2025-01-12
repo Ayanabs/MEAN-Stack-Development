@@ -87,6 +87,7 @@
 
 <!-- User Login Modal -->
 <app-userlogin
+*ngIf=" isLoginModalVisible"
     [isVisible]="isLoginModalVisible"
     (loginSuccess)="onLoginSuccess()"
     (closeModal)="closeLoginModal()"
@@ -94,6 +95,7 @@
 
   <!-- User Signup Modal -->
 <app-usersignup
+*ngIf="isSignupModalVisible"
   [isVisible]="isSignupModalVisible"
   (closeModal)="closeSignupModal()"
 ></app-usersignup>
