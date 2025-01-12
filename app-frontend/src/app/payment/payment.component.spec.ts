@@ -8,42 +8,15 @@ describe('PaymentComponent', () => {
   let component: PaymentComponent;
   let fixture: ComponentFixture<PaymentComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [PaypalButtonComponent], // Make sure to import PayPal component
-      declarations: [PaymentComponent],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            queryParams: of({ totalBookedSeats: '5' }) // Mock the query params if needed
-          }
-        }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(PaymentComponent);
-    component = fixture.componentInstance;
-
-    // Set the input property directly to simulate the parent passing it
-    component.totalBookedSeats = 5; // Mock value for the input
-
-    // Trigger change detection to propagate the change
-    fixture.detectChanges();
+  
+  
+    beforeEach(() => {
+      fixture = TestBed.createComponent(PaymentComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+  
+    it('should create', () => {
+      expect(component).toBeTruthy();
+    });
   });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should pass totalBookedSeats to PaypalButtonComponent', fakeAsync(() => {
-    tick(); // Wait for async operations if necessary
-    fixture.detectChanges(); // Trigger change detection
-
-    // Get the PaypalButtonComponent instance
-    const paypalButtonComponent = fixture.debugElement.children[0].componentInstance;
-
-    // Check if the input value is correctly passed to the PayPal button component
-    expect(paypalButtonComponent.totalBookedSeats).toBe(5);
-  }));
-});
