@@ -90,14 +90,9 @@ jobs:
           docker save -o mean-stack-frontend.tar mean-stack-frontend
           docker save -o mean-stack-backend.tar mean-stack-backend
 
-      # Kill process using port 27017 if occupied
-      - name: Kill process using port 27017
-        run: |
-          sudo lsof -ti :27017 | xargs sudo kill -9 || echo "No process using port 27017"
-
       # Restart Docker Containers Locally
       - name: Restart Docker Containers
         run: |
-          docker stop mean-stack-development-frontend-1 mean-stack-development-backend-1 mean-stack-development-mongo-1 || true
+          docker stop mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
           docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
           docker-compose up --build -d
