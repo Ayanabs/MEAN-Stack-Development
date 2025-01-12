@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing'; // Add this import
-import { ActivatedRoute } from '@angular/router'; // Import ActivatedRoute for mocking
+import { RouterTestingModule } from '@angular/router/testing';
+import { ActivatedRoute } from '@angular/router';
 import { PaymentComponent } from './payment.component';
+import { PaypalButtonComponent } from '../paypal-button/paypal-button.component';
+import { of } from 'rxjs';
 
 describe('PaymentComponent', () => {
   let component: PaymentComponent;
@@ -9,16 +11,17 @@ describe('PaymentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [], // Declare the component, not import
-      imports: [RouterTestingModule,PaymentComponent],  // Add RouterTestingModule
+      imports: [
+        RouterTestingModule,
+        PaymentComponent, // Standalone component
+      ],
       providers: [
-        { 
-          provide: ActivatedRoute, 
-          useValue: { snapshot: { params: { id: '123' } } } // Mock ActivatedRoute
-        }
-      ]
-    })
-    .compileComponents();
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({ id: '123' }) }, // Mock params
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentComponent);
     component = fixture.componentInstance;
