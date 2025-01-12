@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SinglemovieComponent } from './singlemovie.component';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -10,6 +9,7 @@ describe('SinglemovieComponent', () => {
   let fixture: ComponentFixture<SinglemovieComponent>;
   let httpMock: HttpTestingController; 
   let activatedRouteMock: any;
+
   beforeEach(async () => {
     activatedRouteMock = {
       snapshot: {
@@ -17,21 +17,20 @@ describe('SinglemovieComponent', () => {
           get: jasmine.createSpy('get').and.returnValue('123'), // Return mock movie ID
         },
       },
+      paramMap: of({ get: jasmine.createSpy('get').and.returnValue('123') }),  // Simulate observable paramMap
     };
 
     await TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule,SinglemovieComponent  ],
+      imports: [HttpClientTestingModule,SinglemovieComponent], // Correct the import structure
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteMock },  // Provide the mock ActivatedRoute
       ],
-    })
-    .compileComponents();
-
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SinglemovieComponent);
     component = fixture.componentInstance;
     httpMock = TestBed.inject(HttpTestingController);
-    fixture.detectChanges();
+    fixture.detectChanges();  // Trigger change detection so ngOnInit() is called
   });
 
   it('should create', () => {
@@ -41,7 +40,9 @@ describe('SinglemovieComponent', () => {
   it('should fetch movie details for ID', () => {
     // Mock the HTTP response
     const mockResponse = { title: 'Test Movie', id: '123', watchTime: 120 };
-    component.ngOnInit();  // Trigger ngOnInit, which calls the HTTP request
+    
+    // Ensure ngOnInit() is triggered and HTTP request is made automatically
+    fixture.detectChanges();  // Trigger change detection and ngOnInit
 
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmoviebyid/123');
     expect(req.request.method).toBe('GET');
@@ -55,7 +56,8 @@ describe('SinglemovieComponent', () => {
   });
 
   it('should handle error if movie details fail to load', () => {
-    component.ngOnInit();  // Trigger ngOnInit
+    // Ensure ngOnInit() is triggered and HTTP request is made automatically
+    fixture.detectChanges();  // Trigger ngOnInit() automatically
 
     const req = httpMock.expectOne('http://localhost:5000/api/users/getmoviebyid/123');
     expect(req.request.method).toBe('GET');
