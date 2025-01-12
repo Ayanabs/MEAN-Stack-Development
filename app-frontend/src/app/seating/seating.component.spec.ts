@@ -6,23 +6,20 @@ import { SeatingComponent } from '../seating/seating.component';
 describe('SeatingComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SeatingComponent],
+      declarations: [SeatingComponent], // Use `declarations` for components
     }).compileComponents();
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(SeatingComponent);
     const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(app).toBeTruthy(); // Check if the component is created
   });
 
-  it(`should have the 'app-frontend' title`, () => {
+  it(`should have the title 'app-frontend'`, () => {
     const fixture = TestBed.createComponent(SeatingComponent);
     const app = fixture.componentInstance;
-    
   });
-
-  
 });
 function expect(value: any) {
   return {
