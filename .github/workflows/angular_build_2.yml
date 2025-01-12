@@ -15,8 +15,6 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-       
-
 
     strategy:
       matrix:
@@ -63,3 +61,43 @@ jobs:
       - name: Build frontend
         run: npm run build
         working-directory: app-frontend
+
+      # Install Docker Compose
+      - name: Install Docker Compose
+        run: sudo apt-get update && sudo apt-get install -y docker-compose
+
+      - name: Debug: List files in app-frontend
+        run: ls -l ./app-frontend
+
+      # Verify Dockerfile existence for frontend
+      - name: Verify Frontend Dockerfile
+        run: test -f ./app-frontend/Dockerfile || (echo "Dockerfile not found in app-frontend" && exit 1)
+
+      # Build Docker images
+      - name: Build Frontend Docker Image
+        run: docker build -t mean-stack-frontend ./app-frontend
+
+      # Verify Dockerfile existence for backend
+      - name: Verify Backend Dockerfile
+        run: test -f ./app-backend/Dockerfile || (echo "Dockerfile not found in app-backend" && exit 1)
+
+      - name: Build Backend Docker Image
+        run: docker build -t mean-stack-backend ./app-backend
+
+      # Save Docker images as artifacts (optional)
+      - name: Save Docker Images
+        run: |
+          docker save -o mean-stack-frontend.tar mean-stack-frontend
+          docker save -o mean-stack-backend.tar mean-stack-backend
+
+      # Kill process using port 27017 if occupied
+      - name: Kill process using port 27017
+        run: |
+          sudo lsof -ti :27017 | xargs sudo kill -9 || echo "No process using port 27017"
+
+      # Restart Docker Containers Locally
+      - name: Restart Docker Containers
+        run: |
+          docker stop mean-stack-development-frontend-1 mean-stack-development-backend-1 mean-stack-development-mongo-1 || true
+          docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
+          docker-compose up --build -d
