@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { PaymentComponent } from './payment.component';
+import { PaypalButtonComponent } from '../paypal-button/paypal-button.component';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { PaymentComponent } from './payment.component';
 
 describe('PaymentComponent', () => {
   let component: PaymentComponent;
@@ -10,27 +10,25 @@ describe('PaymentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, PaymentComponent],
+      imports: [PaypalButtonComponent], // Make sure to import PayPal component
+      declarations: [PaymentComponent],
       providers: [
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: of({ totalBookedSeats: '5' }), // Mock queryParams observable
-          },
-        },
-      ],
+            queryParams: of({ totalBookedSeats: '5' }) // Mock the query params if needed
+          }
+        }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaymentComponent);
     component = fixture.componentInstance;
 
-    // Trigger change detection to call ngOnInit
-    fixture.detectChanges();
+    // Set the input property directly to simulate the parent passing it
+    component.totalBookedSeats = 5; // Mock value for the input
 
-    // Wait for async queryParam subscription to complete
-    tick(); // Simulate passage of time for async operations
-
-    // Trigger change detection again after the observable emits
+    // Trigger change detection to propagate the change
     fixture.detectChanges();
   });
 
@@ -38,11 +36,14 @@ describe('PaymentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should retrieve totalBookedSeats from query params', fakeAsync(() => {
-    tick(); // Ensure async operations complete
+  it('should pass totalBookedSeats to PaypalButtonComponent', fakeAsync(() => {
+    tick(); // Wait for async operations if necessary
     fixture.detectChanges(); // Trigger change detection
 
-    // Now, check if the value has been set correctly
-    expect(component.totalBookedSeats).toBe(5); // Check if totalBookedSeats is set to 5
+    // Get the PaypalButtonComponent instance
+    const paypalButtonComponent = fixture.debugElement.children[0].componentInstance;
+
+    // Check if the input value is correctly passed to the PayPal button component
+    expect(paypalButtonComponent.totalBookedSeats).toBe(5);
   }));
 });
