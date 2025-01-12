@@ -20,7 +20,7 @@ export class PaypalButtonComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Retrieve the query parameter `totalBookedSeats` from the URL
     this.route.queryParams.subscribe(params => {
-      this.totalBookedSeats = +params['totalBookedSeats']; // Convert string to number, default to 0
+      this.totalBookedSeats = +params['totalBookedSeats'] || 0; // Convert string to number, default to 0
       console.log(`Total seats booked from query params: ${this.totalBookedSeats}`);
     });
   }

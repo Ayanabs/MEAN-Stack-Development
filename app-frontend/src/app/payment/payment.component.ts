@@ -11,5 +11,6 @@ import { PaypalButtonComponent } from "../paypal-button/paypal-button.component"
 
 })
 export class PaymentComponent {
+  totalBookedSeats: any;
 
 }
