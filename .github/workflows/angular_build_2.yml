@@ -93,13 +93,8 @@ jobs:
       # Restart Docker Containers Locally (without MongoDB)
       - name: Restart Docker Containers
         run: |
-          docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
-          docker-compose up --build -d frontend backend
+          docker rm -f mean-stack-development-backend-1 mean-stack-development-frontend-1 || true
+          docker-compose up --build -d 
 
 
 
-      # Restart Docker Containers Locally
-      - name: Restart Docker Containers
-        run: |
-          docker rm mean-stack-development-frontend-1 mean-stack-development-backend-1 || true
-          docker-compose up --build -d
