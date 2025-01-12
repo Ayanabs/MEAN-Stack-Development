@@ -6,7 +6,7 @@ services:
     image: mean-stack-backend
     container_name: mean-stack-development-backend-1
     ports:
-      - "5001:5000"
+      - "5000:5000"
     environment:
       - NODE_ENV=production
       - MONGO_URI=mongodb+srv://neethilakumararatne17:8qm1p5RYVH3fNtPz@mongocluster.gkwkw.mongodb.net/mydatabase?retryWrites=true&w=majority
@@ -16,15 +16,15 @@ services:
     networks:
       - app-network
 
-  # mongo:
-  #   image: mongo:latest
-  #   container_name: mean-stack-development-mongo-1
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongodb_data:/data/db
-  #   networks:
-  #     - app-network
+  mongo:
+    image: mongo:latest
+    container_name: mean-stack-development-mongo-1
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -39,8 +39,8 @@ services:
       - app-network
 
 
-# volumes:
-#   mongodb_data:
+volumes:
+  mongodb_data:
 
 networks:
   app-network:
