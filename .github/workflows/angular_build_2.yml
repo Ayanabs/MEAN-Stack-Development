@@ -91,12 +91,31 @@ jobs:
           docker save -o mean-stack-backend.tar mean-stack-backend
 
       # Restart Docker Containers Locally (without MongoDB)
+           # Restart Docker Containers (shutdown conflicting containers if ports are already allocated)
       - name: Restart Docker Containers
         run: |
-          docker ps -a  # Check containers
+          # List all running containers for debugging
+          echo "Listing all running containers:"
+          docker ps -a
+
+          # Kill processes using conflicting ports (if any)
+          echo "Freeing up ports..."
+          sudo lsof -ti :5000 | xargs sudo kill -9 || echo "No process using port 5000"
+          sudo lsof -ti :27017 | xargs sudo kill -9 || echo "No process using port 27017"
+          sudo lsof -ti :4200 | xargs sudo kill -9 || echo "No process using port 4200"
+
+          # Remove existing containers if present
+          echo "Removing old containers..."
           docker rm -f mean-stack-development-backend-1 mean-stack-development-frontend-1 mean-stack-development-mongo-1 || true
-          docker-compose down
-          docker-compose up --build -d 
+
+          # Bring down any leftover Docker Compose networks
+          echo "Bringing down existing Docker Compose setup..."
+          docker-compose down || true
+
+          # Start updated containers
+          echo "Starting updated containers..."
+          docker-compose up --build -d
+
 
 
 
