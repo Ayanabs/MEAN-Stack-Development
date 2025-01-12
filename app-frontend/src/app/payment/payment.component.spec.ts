@@ -1,32 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PaypalButtonComponent } from '../paypal-button/paypal-button.component';
-import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs'; // Observable to mock
+import { RouterTestingModule } from '@angular/router/testing'; // Add this import
+import { ActivatedRoute } from '@angular/router'; // Import ActivatedRoute for mocking
+import { PaymentComponent } from './payment.component';
 
-describe('PaypalButtonComponent', () => {
-  let component: PaypalButtonComponent;
-  let fixture: ComponentFixture<PaypalButtonComponent>;
+describe('PaymentComponent', () => {
+  let component: PaymentComponent;
+  let fixture: ComponentFixture<PaymentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [],  // Declare the component under test
-      imports: [PaypalButtonComponent],  // Import the standalone component directly here
+      declarations: [], // Declare the component, not import
+      imports: [RouterTestingModule,PaymentComponent],  // Add RouterTestingModule
       providers: [
-        {
-          provide: ActivatedRoute,  // Mock the ActivatedRoute dependency
-          useValue: {
-            params: of({ id: '123' })  // Mocking the observable for route params
-          }
+        { 
+          provide: ActivatedRoute, 
+          useValue: { snapshot: { params: { id: '123' } } } // Mock ActivatedRoute
         }
       ]
-    }).compileComponents();
+    })
+    .compileComponents();
 
-    fixture = TestBed.createComponent(PaypalButtonComponent);  // Create the component instance
-    component = fixture.componentInstance;  // Get the component instance
-    fixture.detectChanges();  // Trigger change detection to update the view
+    fixture = TestBed.createComponent(PaymentComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();  // Test if component is created successfully
+    expect(component).toBeTruthy();
   });
 });

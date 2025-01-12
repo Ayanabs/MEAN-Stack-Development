@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PaypalButtonComponent } from './paypal-button.component';
-import { ActivatedRoute } from '@angular/router'; // Assuming the component uses ActivatedRoute
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
 describe('PaypalButtonComponent', () => {
@@ -9,15 +9,16 @@ describe('PaypalButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaypalButtonComponent], // Import the standalone component directly here
+      imports: [PaypalButtonComponent], // Standalone component import
       providers: [
         {
           provide: ActivatedRoute,
           useValue: {
-            params: of({ id: '123' })  // Mock ActivatedRoute if the component uses it
-          }
-        }
-      ]
+            params: of({ id: '123' }), // Mock 'params' Observable
+            queryParams: of({ ref: 'test' }), // Add 'queryParams' if needed
+          },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaypalButtonComponent);
