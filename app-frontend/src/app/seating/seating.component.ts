@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 import { safeLocalStorage } from '../utils/local-storage.util'; // Update the path as needed
 import { SessionService } from '../../services/session.service';
+
+import { Router } from '@angular/router';
 
 
 
@@ -46,7 +48,9 @@ export class SeatingComponent implements OnInit {
   bookedSeat: { row: number; seat: number; status: string } | null = null;
   loggedInUserId: string | null = null;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService) { }
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private sessionService: SessionService,private router: Router) { }
+
 
   ngOnInit(): void {
     const sessionData = this.sessionService.getSession();
@@ -435,4 +439,42 @@ export class SeatingComponent implements OnInit {
     const seatKey = `${rowIndex + 1}-${seatIndex + 1}`;
     return this.seatOwnershipMap[seatKey] === sessionData.userId;
   }
+
+  getTotalBookedSeats(): number {
+    let totalSeatsBooked = 0;
+  
+    this.rows.forEach((row) => {
+      row.forEach((seat) => {
+        if (seat.booked) {
+          totalSeatsBooked++;
+        }
+      });
+    });
+  
+    return totalSeatsBooked;
+  }
+  
+  totalBookedSeats: number = 0;
+
+  @Output() bookedSeatsChange = new EventEmitter<number>();
+
+  bookSeat(): void {
+    this.totalBookedSeats += 1; // Increment seat count
+    this.bookedSeatsChange.emit(this.totalBookedSeats); // Emit the updated seat count
+
+  }
+  
+
+
+   // Method to redirect to the PaymentComponent
+   redirectToPayment(): void {
+    const totalBookedSeats = this.getTotalBookedSeats();
+    console.log(`Total seats booked for payment: ${totalBookedSeats}`);
+    
+    // Optionally, pass this information to the payment route
+    this.router.navigate(['/payment'], {
+      queryParams: { totalBookedSeats },
+    });
+  }
+  
 }

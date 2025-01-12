@@ -1,11 +1,12 @@
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-singlemovie',
-  imports: [CommonModule,NgIf],
+  imports: [CommonModule,NgIf,RouterLink],
   templateUrl: './singlemovie.component.html',
   styleUrl: './singlemovie.component.css'
 })

@@ -55,7 +55,7 @@ export class NavbarComponent {
 
   closeLoginModal() {
     this.isLoginModalVisible = false;
-    
+
   }
   openSignupModal() {
     this.isSignupModalVisible = true;
@@ -84,11 +84,16 @@ export class NavbarComponent {
           console.log('Logout response:', response); 
           this.isLoggedIn = false; // Update frontend state
           this.sessionService.clearSession(); // Clear session from localStorage
-          window.location.reload();
+
+         
           
           alert('You have successfully logged out.');
           // Optionally redirect user to the home page
+          this.router.navigate(['/home']);
+
+          window.location.reload();
           
+
         },
         error: (error) => {
           console.error('Error logging out:', error);
